@@ -1,4 +1,4 @@
-  steps:
+steps:
 - template: build.yml
 
 - task: DotNetCoreCLI@2
