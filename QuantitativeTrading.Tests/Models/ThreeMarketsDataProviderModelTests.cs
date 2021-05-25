@@ -12,12 +12,12 @@ namespace QuantitativeTrading.Tests.Models
         public async Task TestLoadDataAsync()
         {
             ThreeMarketsModel model = await ThreeMarketsModel.CreateModel(Utils.btc_usdtPath, Utils.eth_usdtPath, Utils.eth_btcPath);
-            Assert.AreEqual("BTCUSDT-Spot", model.B2AKlines[0].StockCode);
-            Assert.AreEqual(309559, model.B2AKlines.Length);
-            Assert.AreEqual("ETHUSDT-Spot", model.C2AKlines[0].StockCode);
-            Assert.AreEqual(309559, model.C2AKlines.Length);
-            Assert.AreEqual("ETHBTC-Spot", model.C2BKlines[0].StockCode);
-            Assert.AreEqual(309559, model.C2BKlines.Length);
+            Assert.AreEqual("BTCUSDT-Spot", model.Coin12CoinKlines[0].StockCode);
+            Assert.AreEqual(309559, model.Coin12CoinKlines.Length);
+            Assert.AreEqual("ETHUSDT-Spot", model.Coin22CoinKlines[0].StockCode);
+            Assert.AreEqual(309559, model.Coin22CoinKlines.Length);
+            Assert.AreEqual("ETHBTC-Spot", model.Coin22Coin1Klines[0].StockCode);
+            Assert.AreEqual(309559, model.Coin22Coin1Klines.Length);
         }
     }
 }

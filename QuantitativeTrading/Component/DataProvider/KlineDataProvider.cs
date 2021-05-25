@@ -3,8 +3,9 @@ using System.Collections.Generic;
 
 namespace QuantitativeTrading.Component.DataProvider
 {
-    public abstract class DataProvider<T> : IEnumerable<T>
+    public abstract class KlineDataProvider<T> : IEnumerable<T>
     {
+        public bool IsEnd { get { return index >= models.Count - 1; } }
         public T this[int index] { get { return models[index]; } }
         public T Current { get { return models[index]; } }
         public long Length { get { return models.Count; } }
@@ -18,7 +19,7 @@ namespace QuantitativeTrading.Component.DataProvider
         public bool MoveNext(out T model)
         {
             index++;
-            if (index >= models.Count - 1)
+            if (IsEnd)
             {
                 model = default;
                 return false;

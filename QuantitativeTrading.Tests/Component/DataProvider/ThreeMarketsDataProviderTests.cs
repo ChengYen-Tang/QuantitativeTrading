@@ -26,11 +26,11 @@ namespace QuantitativeTrading.Tests.Component.DataProvider
         [TestMethod]
         public void TestOrder()
         {
-            DateTime time = provider.Current.B2AKline.Date;
+            DateTime time = provider.Current.Coin12CoinKline.Date;
             while (provider.MoveNext(out ThreeMarketsDataProviderModel model))
             {
-                Assert.IsTrue(model.B2AKline.Date > time);
-                time = model.B2AKline.Date;
+                Assert.IsTrue(model.Coin12CoinKline.Date > time);
+                time = model.Coin12CoinKline.Date;
             }
         }
 
@@ -39,8 +39,8 @@ namespace QuantitativeTrading.Tests.Component.DataProvider
         {
             foreach (ThreeMarketsDataProviderModel model in provider)
             {
-                Assert.AreEqual(model.B2AKline.Date, model.C2AKline.Date);
-                Assert.AreEqual(model.C2AKline.Date, model.C2BKline.Date);
+                Assert.AreEqual(model.Coin12CoinKline.Date, model.Coin22CoinKline.Date);
+                Assert.AreEqual(model.Coin22CoinKline.Date, model.Coin22Coin1Kline.Date);
             }
         }
 

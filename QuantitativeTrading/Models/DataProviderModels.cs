@@ -7,9 +7,9 @@ namespace QuantitativeTrading.Models
 {
     public class ThreeMarketsDataProviderModel
     {
-        public KlineModel B2AKline { get; set; }
-        public KlineModel C2AKline { get; set; }
-        public KlineModel C2BKline { get; set; }
+        public KlineModel Coin12CoinKline { get; set; }
+        public KlineModel Coin22CoinKline { get; set; }
+        public KlineModel Coin22Coin1Kline { get; set; }
     }
 
     /// <summary>
@@ -17,25 +17,25 @@ namespace QuantitativeTrading.Models
     /// </summary>
     public class ThreeMarketsModel : DataProviderModel
     {
-        public KlineModel[] B2AKlines { get; init; }
-        public KlineModel[] C2AKlines { get; init; }
-        public KlineModel[] C2BKlines { get; init; }
+        public KlineModel[] Coin12CoinKlines { get; init; }
+        public KlineModel[] Coin22CoinKlines { get; init; }
+        public KlineModel[] Coin22Coin1Klines { get; init; }
 
-        private ThreeMarketsModel(KlineModel[] B2AKlines, KlineModel[] C2AKlines, KlineModel[] C2BKlines)
-            => (this.B2AKlines, this.C2AKlines, this.C2BKlines) = (B2AKlines, C2AKlines, C2BKlines);
+        private ThreeMarketsModel(KlineModel[] Coin12CoinKlines, KlineModel[] Coin22CoinKlines, KlineModel[] Coin22Coin1Klines)
+            => (this.Coin12CoinKlines, this.Coin22CoinKlines, this.Coin22Coin1Klines) = (Coin12CoinKlines, Coin22CoinKlines, Coin22Coin1Klines);
 
         /// <summary>
         /// 建立 ThreeMarketsDataProviderModel
         /// 
-        /// 假設 A 是 USDT，B 是 BTC，C 是 ETH
+        /// 假設 Coin 是 USDT，Coin1 是 BTC，Coin2 是 ETH
         /// </summary>
-        /// <param name="B2APath"> BTC 對 USDT 價格的路徑 (1 BTC = X USDT) </param>
-        /// <param name="C2APath"> ETH 對 USDT 價格的路徑 (1 ETH = X USDT) </param>
-        /// <param name="C2BPath"> ETH 對 BTC 價格的路徑 (1 ETH = X BTC) </param>
+        /// <param name="Coin12CoinPath"> BTC 對 USDT 價格的路徑 (1 BTC = X USDT) </param>
+        /// <param name="Coin22CoinPath"> ETH 對 USDT 價格的路徑 (1 ETH = X USDT) </param>
+        /// <param name="Coin22Coin1Path"> ETH 對 BTC 價格的路徑 (1 ETH = X BTC) </param>
         /// <returns></returns>
-        public static async Task<ThreeMarketsModel> CreateModel(string B2APath, string C2APath, string C2BPath)
+        public static async Task<ThreeMarketsModel> CreateModel(string Coin12CoinPath, string Coin22CoinPath, string Coin22Coin1Path)
         {
-            Task<KlineModel[]>[] tasks = new[] { LoadCSVAsync(B2APath), LoadCSVAsync(C2APath), LoadCSVAsync(C2BPath) };
+            Task<KlineModel[]>[] tasks = new[] { LoadCSVAsync(Coin12CoinPath), LoadCSVAsync(Coin22CoinPath), LoadCSVAsync(Coin22Coin1Path) };
             KlineModel[][] klineModels = await Task.WhenAll(tasks);
             return new ThreeMarketsModel(klineModels[0], klineModels[1], klineModels[2]);
         }
