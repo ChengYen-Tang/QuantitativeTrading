@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Component.DataProvider
 {
@@ -14,8 +15,10 @@ namespace QuantitativeTrading.Component.DataProvider
 
         private int index = 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Reset() => index = 0;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext(out T model)
         {
             index++;
@@ -29,6 +32,7 @@ namespace QuantitativeTrading.Component.DataProvider
             return true;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IEnumerable<T> GetHistory(int historyPoint)
         {
             int timePoint = (historyPoint - 1);
@@ -39,9 +43,11 @@ namespace QuantitativeTrading.Component.DataProvider
                 yield return models[i];
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IEnumerator<T> GetEnumerator()
             => models.GetEnumerator();
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator IEnumerable.GetEnumerator()
             => models.GetEnumerator();
     }

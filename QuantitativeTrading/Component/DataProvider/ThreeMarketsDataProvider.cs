@@ -1,14 +1,17 @@
 ﻿using QuantitativeTrading.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Component.DataProvider
 {
     public class ThreeMarketsDataProvider : KlineDataProvider<ThreeMarketsDataProviderModel>
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ThreeMarketsDataProvider(ThreeMarketsModel model)
             => models = Join(model);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static List<ThreeMarketsDataProviderModel> Join(ThreeMarketsModel model)
             => model.Coin12CoinKlines.AsParallel()
             .Join(model.Coin22CoinKlines.AsParallel(), B2AKline => B2AKline.Date, C2AKline => C2AKline.Date, (B2AKline, C2AKline) => new { B2AKline, C2AKline })
