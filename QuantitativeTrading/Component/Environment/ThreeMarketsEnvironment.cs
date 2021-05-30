@@ -3,15 +3,15 @@ using QuantitativeTrading.Models;
 
 namespace QuantitativeTrading.Component.Environment
 {
-    public class ThreeMarketsEnvironment : TradingEnvironment<ThreeMarketsDataProvider, ThreeMarketsDataProviderModel>, ISpot
+    public class ThreeMarketsEnvironment : MarketEnvironment<ThreeMarketsDataProvider, ThreeMarketsDataProviderModel>, ISpot
     {
         public override decimal Assets 
             { get { return Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close; } }
         public decimal CoinBalance1 { get; private set; }
         public decimal CoinBalance2 { get; private set; }
 
-        public ThreeMarketsEnvironment(ThreeMarketsDataProvider dataProvider, decimal handlingFee, int smallestUnit)
-            :base(dataProvider, handlingFee, smallestUnit)
+        public ThreeMarketsEnvironment(ThreeMarketsDataProvider dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
+            :base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit)
         { }
 
         public (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
@@ -35,7 +35,7 @@ namespace QuantitativeTrading.Component.Environment
             }
             else
             {
-                (decimal income, decimal count) = Buy(price, secondaryBalance);
+                (decimal income, decimal count) = Sell(price, secondaryBalance);
                 return (mainBalance + income, secondaryBalance - count);
             }
         }

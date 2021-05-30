@@ -1,5 +1,6 @@
 ﻿using Magicodes.ExporterAndImporter.Core;
 using Magicodes.ExporterAndImporter.Csv;
+using MoreLinq.Extensions;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +22,7 @@ namespace QuantitativeTrading.Models
         public KlineModel[] Coin22CoinKlines { get; init; }
         public KlineModel[] Coin22Coin1Klines { get; init; }
 
-        private ThreeMarketsModel(KlineModel[] Coin12CoinKlines, KlineModel[] Coin22CoinKlines, KlineModel[] Coin22Coin1Klines)
+        public ThreeMarketsModel(KlineModel[] Coin12CoinKlines, KlineModel[] Coin22CoinKlines, KlineModel[] Coin22Coin1Klines)
             => (this.Coin12CoinKlines, this.Coin22CoinKlines, this.Coin22Coin1Klines) = (Coin12CoinKlines, Coin22CoinKlines, Coin22Coin1Klines);
 
         /// <summary>
@@ -50,7 +51,7 @@ namespace QuantitativeTrading.Models
             if (result.HasError)
                 throw result.Exception;
 
-            return result.Data.OrderBy(item => item.Date).ToArray();
+            return result.Data.DistinctBy(item => item.Date).OrderBy(item => item.Date).ToArray();
         }
     }
 }
