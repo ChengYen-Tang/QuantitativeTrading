@@ -1,7 +1,7 @@
-﻿using QuantitativeTrading.Component.DataProvider;
+﻿using QuantitativeTrading.DataProvider;
 using QuantitativeTrading.Models;
 
-namespace QuantitativeTrading.Component.Environment
+namespace QuantitativeTrading.Environment
 {
     public class ThreeMarketsEnvironment : MarketEnvironment<ThreeMarketsDataProvider, ThreeMarketsDataProviderModel>, ISpot
     {

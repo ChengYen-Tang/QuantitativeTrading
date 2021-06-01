@@ -1,4 +1,4 @@
-﻿namespace QuantitativeTrading.Component.Environment
+﻿namespace QuantitativeTrading.Environment
 {
     public interface ISpot
     {

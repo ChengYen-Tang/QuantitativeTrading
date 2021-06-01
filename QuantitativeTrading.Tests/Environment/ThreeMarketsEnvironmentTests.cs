@@ -1,8 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantitativeTrading.Component.Environment;
+using QuantitativeTrading.Environment;
 using QuantitativeTrading.Models;
 
-namespace QuantitativeTrading.Tests.Component.Environment
+namespace QuantitativeTrading.Tests.Environment
 {
     [TestClass]
     public class ThreeMarketsEnvironmentTests

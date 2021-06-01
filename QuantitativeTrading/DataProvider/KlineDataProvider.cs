@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace QuantitativeTrading.Component.DataProvider
+namespace QuantitativeTrading.DataProvider
 {
     public abstract class KlineDataProvider<T> : IEnumerable<T>
     {
@@ -35,7 +35,7 @@ namespace QuantitativeTrading.Component.DataProvider
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IEnumerable<T> GetHistory(int historyPoint)
         {
-            int timePoint = (historyPoint - 1);
+            int timePoint = historyPoint - 1;
             int historyIndex = 0;
             if (index > timePoint)
                 historyIndex = index - timePoint;

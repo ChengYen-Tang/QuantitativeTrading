@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantitativeTrading.Component.DataProvider;
+using QuantitativeTrading.DataProvider;
 using QuantitativeTrading.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace QuantitativeTrading.Tests.Component.DataProvider
+namespace QuantitativeTrading.Tests.DataProvider
 {
     [TestClass]
     public class ThreeMarketsDataProviderTests

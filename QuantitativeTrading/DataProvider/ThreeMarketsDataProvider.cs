@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace QuantitativeTrading.Component.DataProvider
+namespace QuantitativeTrading.DataProvider
 {
     public class ThreeMarketsDataProvider : KlineDataProvider<ThreeMarketsDataProviderModel>
     {

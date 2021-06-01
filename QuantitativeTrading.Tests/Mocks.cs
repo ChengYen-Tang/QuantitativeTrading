@@ -1,4 +1,4 @@
-﻿using QuantitativeTrading.Component.DataProvider;
+﻿using QuantitativeTrading.DataProvider;
 using QuantitativeTrading.Models;
 using System;
 

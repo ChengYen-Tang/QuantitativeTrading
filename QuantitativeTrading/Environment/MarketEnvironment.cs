@@ -1,7 +1,7 @@
-﻿using QuantitativeTrading.Component.DataProvider;
+﻿using QuantitativeTrading.DataProvider;
 using System;
 
-namespace QuantitativeTrading.Component.Environment
+namespace QuantitativeTrading.Environment
 {
     public abstract class MarketEnvironment<T, U> 
         where T : KlineDataProvider<U>
