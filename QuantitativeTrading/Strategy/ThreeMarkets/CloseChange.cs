@@ -1,5 +1,4 @@
 ﻿using QuantitativeTrading.Models;
-using System.Linq;
 
 namespace QuantitativeTrading.Strategy.ThreeMarkets
 {
@@ -14,12 +13,9 @@ namespace QuantitativeTrading.Strategy.ThreeMarkets
             if (buffer.Count < bufferSize)
                 return StrategyAction.WaitBuffer;
 
-            decimal coin1ToCoinChange = buffer.Select(item => item.Coin12CoinKline.Change).Sum();
-            decimal coin2ToCoinChange = buffer.Select(item => item.Coin22CoinKline.Change).Sum();
-
-            if (coin1ToCoinChange < 0 && coin2ToCoinChange < 0)
+            if (Coin1ToCoinChange < 0 && Coin2ToCoinChange < 0)
                 return StrategyAction.Coin;
-            if (coin1ToCoinChange > coin2ToCoinChange)
+            if (Coin1ToCoinChange > Coin2ToCoinChange)
                 return StrategyAction.Coin1;
             else
                 return StrategyAction.Coin2;
