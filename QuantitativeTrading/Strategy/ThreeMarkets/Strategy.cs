@@ -40,7 +40,9 @@ namespace QuantitativeTrading.Strategy.ThreeMarkets
 
     public enum BestPath
     {
+        // 3 point
         Path1 = 0,
+        // 2 point
         Path2
     }
 }
