@@ -1,6 +1,8 @@
 ﻿using QuantitativeTrading.DataProvider;
+using QuantitativeTrading.Environment;
 using QuantitativeTrading.Models;
 using System;
+using System.Collections.Generic;
 
 namespace QuantitativeTrading.Tests
 {
@@ -35,4 +37,27 @@ namespace QuantitativeTrading.Tests
         }
     }
 
+    public class ThreeMarketsEnvironmentMock : ThreeMarketsEnvironment
+    {
+        public readonly List<(TradingAction action, TradingMarket market)> Actions;
+
+        public ThreeMarketsEnvironmentMock()
+            : base(null, default, default, default, default)
+            => Actions = new();
+
+        public override (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
+        {
+            Actions.Add((action, market));
+            return (default, default, default);
+        }
+
+        public void SetBalance(decimal balance)
+            => Balance = balance;
+
+        public void SetCoinBalance1(decimal balance)
+            => CoinBalance1 = balance;
+
+        public void SetCoinBalance2(decimal balance)
+            => CoinBalance2 = balance;
+    }
 }

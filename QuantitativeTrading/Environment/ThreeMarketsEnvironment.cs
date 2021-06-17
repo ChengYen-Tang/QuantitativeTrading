@@ -7,14 +7,14 @@ namespace QuantitativeTrading.Environment
     {
         public override decimal Assets 
             { get { return Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close; } }
-        public decimal CoinBalance1 { get; private set; }
-        public decimal CoinBalance2 { get; private set; }
+        public decimal CoinBalance1 { get; protected set; }
+        public decimal CoinBalance2 { get; protected set; }
 
         public ThreeMarketsEnvironment(ThreeMarketsDataProvider dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
             :base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit)
         { }
 
-        public (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
+        public virtual (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
         {
             if (market == TradingMarket.Coin12Coin)
                 (Balance, CoinBalance1) = TradingAction(action, dataProvider.Current.Coin12CoinKline.Close, Balance, CoinBalance1);

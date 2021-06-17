@@ -14,17 +14,20 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PrivateObjectExtensions" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="TestFiles\" />
+    <Folder Include="Runner\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QuantitativeTrading\QuantitativeTrading.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Runner\" />
+  </ItemGroup>
   <ItemGroup>
     <None Update="TestFiles\BTCUSDT-Spot.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
