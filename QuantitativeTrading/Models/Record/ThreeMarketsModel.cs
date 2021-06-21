@@ -12,6 +12,8 @@ namespace QuantitativeTrading.Models.Record
         public decimal Balance { get; set; }
         public decimal CoinBalance1 { get; set; }
         public decimal CoinBalance2 { get; set; }
+        public decimal Coin1ToCoinChange { get; set; }
+        public decimal Coin2ToCoinChange { get; set; }
     }
     
 }

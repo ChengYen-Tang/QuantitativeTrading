@@ -7,10 +7,15 @@ namespace QuantitativeTrading.Strategy.ThreeMarkets
     public abstract class Strategy
     {
         protected readonly int bufferSize;
+        protected int step = 0;
+        protected int tradingInterval;
         protected FixedSizeQueue<ThreeMarketsDataProviderModel> buffer;
 
-        public Strategy(int bufferSize)
-            => (this.bufferSize, buffer) = (bufferSize, new(bufferSize));
+        public decimal Coin1ToCoinChange { get { return buffer.Select(item => item.Coin12CoinKline.Change).Sum(); } }
+        public decimal Coin2ToCoinChange { get { return buffer.Select(item => item.Coin22CoinKline.Change).Sum(); } }
+
+        public Strategy(int bufferSize, int tradingInterval)
+            => (this.bufferSize, this.tradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));
 
         public BestPath BestCoin1ToCoin2Path(StrategyAction strategyAction)
         {
@@ -27,6 +32,18 @@ namespace QuantitativeTrading.Strategy.ThreeMarkets
             }
 
             throw new Exception("輸入只允許 Coin1 or Coin2");
+        }
+
+        protected bool CanTrading()
+        {
+            if (step == tradingInterval)
+            {
+                step = 0;
+                return true;
+            }
+
+            step++;
+            return false;
         }
     }
 

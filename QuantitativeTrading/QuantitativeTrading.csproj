@@ -6,8 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Magicodes.IE.Csv" Version="2.5.4.2" />
+    <PackageReference Include="Magicodes.IE.Csv" Version="2.5.4.3" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="DataProvider\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataProvider\" />
+  </ItemGroup>
 </Project>

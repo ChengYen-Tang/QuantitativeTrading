@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using QuantitativeTrading.Environment;
 using QuantitativeTrading.Models;
@@ -23,8 +24,10 @@ namespace QuantitativeTrading.Runner
                 environment.MoveNextTime(out ThreeMarketsDataProviderModel data);
                 StrategyAction action = strategy.PolicyDecision(data);
                 Trading(action);
+                Console.Clear();
+                Console.WriteLine($"Date: {environment.CurrentKline.Coin12CoinKline.Date}, Assets: {environment.Assets}");
 
-                recorder.Insert(new(){ Date = data.Coin12CoinKline.Date, Coin12CoinClose = data.Coin12CoinKline.Close, Coin22CoinClose = data.Coin22CoinKline.Close, Coin22Coin1Close = data.Coin22Coin1Kline.Close, Assets = environment.Assets, Balance = environment.Balance, CoinBalance1 = environment.CoinBalance1, CoinBalance2 = environment.CoinBalance2 });
+                recorder.Insert(new(){ Date = data.Coin12CoinKline.Date, Coin12CoinClose = data.Coin12CoinKline.Close, Coin22CoinClose = data.Coin22CoinKline.Close, Coin22Coin1Close = data.Coin22Coin1Kline.Close, Assets = environment.Assets, Balance = environment.Balance, CoinBalance1 = environment.CoinBalance1, CoinBalance2 = environment.CoinBalance2, Coin1ToCoinChange = strategy.Coin1ToCoinChange, Coin2ToCoinChange = strategy.Coin2ToCoinChange });
             }
 
             await recorder.SaveAsync();
