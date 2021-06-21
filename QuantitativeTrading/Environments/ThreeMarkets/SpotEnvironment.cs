@@ -1,17 +1,17 @@
-﻿using QuantitativeTrading.DataProvider;
+﻿using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Models;
 
-namespace QuantitativeTrading.Environment
+namespace QuantitativeTrading.Environments.ThreeMarkets
 {
-    public class ThreeMarketsEnvironment : MarketEnvironment<ThreeMarketsDataProvider, ThreeMarketsDataProviderModel>, ISpot
+    public class SpotEnvironment : Environment<ThreeMarketsDataProvider, ThreeMarketsDataProviderModel>
     {
-        public override decimal Assets 
-            { get { return Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close; } }
+        public override decimal Assets
+        { get { return Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close; } }
         public decimal CoinBalance1 { get; protected set; }
         public decimal CoinBalance2 { get; protected set; }
 
-        public ThreeMarketsEnvironment(ThreeMarketsDataProvider dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
-            :base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit)
+        public SpotEnvironment(ThreeMarketsDataProvider dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
+            : base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit)
         { }
 
         public virtual (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
@@ -28,7 +28,7 @@ namespace QuantitativeTrading.Environment
 
         private (decimal mainBalance, decimal secondaryBalance) TradingAction(TradingAction action, decimal price, decimal mainBalance, decimal secondaryBalance)
         {
-            if (action == Environment.TradingAction.Buy)
+            if (action == Environments.TradingAction.Buy)
             {
                 (decimal cost, decimal count) = Buy(price, mainBalance);
                 return (mainBalance - cost, secondaryBalance + count);

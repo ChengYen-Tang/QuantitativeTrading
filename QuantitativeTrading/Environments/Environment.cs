@@ -1,9 +1,9 @@
-﻿using QuantitativeTrading.DataProvider;
+﻿using QuantitativeTrading.Data.DataProviders;
 using System;
 
-namespace QuantitativeTrading.Environment
+namespace QuantitativeTrading.Environments
 {
-    public abstract class MarketEnvironment<T, U> 
+    public abstract class Environment<T, U>
         where T : KlineDataProvider<U>
     {
         public abstract decimal Assets { get; }
@@ -16,7 +16,7 @@ namespace QuantitativeTrading.Environment
         private readonly decimal gameOverAssets;
         private readonly decimal smallestUnit;
 
-        public MarketEnvironment(T dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
+        public Environment(T dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
             => (this.dataProvider, Balance, this.gameOverAssets, this.handlingFee, this.smallestUnit) = (dataProvider, balance, gameOverAssets, handlingFee / 100, Convert.ToDecimal(Math.Pow(10, smallestUnit)));
 
         public bool MoveNextTime(out U model)

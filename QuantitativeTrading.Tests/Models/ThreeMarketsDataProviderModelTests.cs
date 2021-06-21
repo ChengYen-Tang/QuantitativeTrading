@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QuantitativeTrading.Data.DataLoaders;
 using QuantitativeTrading.Models;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace QuantitativeTrading.Tests.Models
@@ -11,13 +11,13 @@ namespace QuantitativeTrading.Tests.Models
         [TestMethod]
         public async Task TestLoadDataAsync()
         {
-            ThreeMarketsModel model = await ThreeMarketsModel.CreateModel(Utils.btc_usdtPath, Utils.eth_usdtPath, Utils.eth_btcPath);
-            Assert.AreEqual("BTCUSDT-Spot", model.Coin12CoinKlines[0].StockCode);
-            Assert.AreEqual(309559, model.Coin12CoinKlines.Length);
-            Assert.AreEqual("ETHUSDT-Spot", model.Coin22CoinKlines[0].StockCode);
-            Assert.AreEqual(309559, model.Coin22CoinKlines.Length);
-            Assert.AreEqual("ETHBTC-Spot", model.Coin22Coin1Klines[0].StockCode);
-            Assert.AreEqual(309559, model.Coin22Coin1Klines.Length);
+            ThreeMarketsDatasetModel dataset = await ThreeMarketsDataLoader.LoadCsvDataAsync(Utils.btc_usdtPath, Utils.eth_usdtPath, Utils.eth_btcPath);
+            Assert.AreEqual("BTCUSDT-Spot", dataset.Coin12CoinKlines[0].StockCode);
+            Assert.AreEqual(309559, dataset.Coin12CoinKlines.Length);
+            Assert.AreEqual("ETHUSDT-Spot", dataset.Coin22CoinKlines[0].StockCode);
+            Assert.AreEqual(309559, dataset.Coin22CoinKlines.Length);
+            Assert.AreEqual("ETHBTC-Spot", dataset.Coin22Coin1Klines[0].StockCode);
+            Assert.AreEqual(309559, dataset.Coin22Coin1Klines.Length);
         }
     }
 }

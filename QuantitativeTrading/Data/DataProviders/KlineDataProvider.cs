@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace QuantitativeTrading.DataProvider
+namespace QuantitativeTrading.Data.DataProviders
 {
     public abstract class KlineDataProvider<T> : IEnumerable<T>
     {

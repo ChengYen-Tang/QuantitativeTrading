@@ -1,8 +1,8 @@
 using System;
 
-namespace QuantitativeTrading.Models.Record
+namespace QuantitativeTrading.Models
 {
-    public class ThreeMarketsModel
+    public class ThreeMarketsRecordModel
     {
         public DateTime Date { get; set; }
         public decimal Coin12CoinClose { get; set; }
@@ -15,5 +15,4 @@ namespace QuantitativeTrading.Models.Record
         public decimal Coin1ToCoinChange { get; set; }
         public decimal Coin2ToCoinChange { get; set; }
     }
-    
 }

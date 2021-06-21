@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantitativeTrading.DataProvider;
+using QuantitativeTrading.Data.DataLoaders;
+using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Models;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace QuantitativeTrading.Tests.DataProvider
         private readonly ThreeMarketsDataProvider provider;
 
         public ThreeMarketsDataProviderTests()
-            => provider = new(ThreeMarketsModel.CreateModel(Utils.btc_usdtPath, Utils.eth_usdtPath, Utils.eth_btcPath).Result);
+            => provider = new(ThreeMarketsDataLoader.LoadCsvDataAsync(Utils.btc_usdtPath, Utils.eth_usdtPath, Utils.eth_btcPath).Result);
 
         [TestInitialize]
         public void Init()

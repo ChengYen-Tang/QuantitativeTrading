@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using QuantitativeTrading.DataProvider;
-using QuantitativeTrading.Environment;
+using QuantitativeTrading.Data.DataLoaders;
+using QuantitativeTrading.Data.DataProviders;
+using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
-using QuantitativeTrading.Runner;
-using QuantitativeTrading.Strategy.ThreeMarkets;
+using QuantitativeTrading.Runners.ThreeMarkets;
+using QuantitativeTrading.Strategies.ThreeMarkets;
 
 namespace QuantitativeTrading
 {
@@ -15,10 +16,10 @@ namespace QuantitativeTrading
 
         static async Task Main(string[] args)
         {
-            ThreeMarketsModel model = await ThreeMarketsModel.CreateModel(Path.Combine(datasetPath, "BTCUSDT-Spot.csv"), Path.Combine(datasetPath, "ETHUSDT-Spot.csv"), Path.Combine(datasetPath, "ETHBTC-Spot.csv"));
-            ThreeMarketsDataProvider dataProvider = new(model);
-            ThreeMarketsEnvironment env = new(dataProvider, 20000, 10000, 0.1m, 3);
-            ThreeMarketsRunner<CloseChange> runner = new(new(28800, 1440), env, new("5min", AppDomain.CurrentDomain.BaseDirectory));
+            ThreeMarketsDatasetModel dataset = await ThreeMarketsDataLoader.LoadCsvDataAsync(Path.Combine(datasetPath, "BTCUSDT-Spot.csv"), Path.Combine(datasetPath, "ETHUSDT-Spot.csv"), Path.Combine(datasetPath, "ETHBTC-Spot.csv"));
+            ThreeMarketsDataProvider dataProvider = new(dataset);
+            SpotEnvironment env = new(dataProvider, 20000, 10000, 0.1m, 3);
+            Runner<CloseChange> runner = new(new(28800, 1440), env, new("5min", AppDomain.CurrentDomain.BaseDirectory));
             await runner.RunAsync();
             Console.WriteLine($"Assets: {env.Assets}");
             Console.WriteLine($"Balance: {env.Balance}");

@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantitativeTrading.Environment;
-using QuantitativeTrading.Runner;
-using QuantitativeTrading.Strategy.ThreeMarkets;
+using QuantitativeTrading.Environments;
+using QuantitativeTrading.Environments.ThreeMarkets;
+using QuantitativeTrading.Runners.ThreeMarkets;
+using QuantitativeTrading.Strategies.ThreeMarkets;
 
 namespace QuantitativeTrading.Tests.Runner
 {
@@ -10,13 +11,13 @@ namespace QuantitativeTrading.Tests.Runner
     {
         private CloseChange closeChange;
         private PrivateObject privateObject;
-        private ThreeMarketsRunner<CloseChange> runner;
+        private Runner<CloseChange> runner;
         private ThreeMarketsEnvironmentMock env;
 
         [TestInitialize]
         public void Init()
         {
-            closeChange = new(1);
+            closeChange = new(1, 1);
             env = new();
             runner = new(closeChange, env, null);
             privateObject = new(runner);

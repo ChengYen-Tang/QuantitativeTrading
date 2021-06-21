@@ -1,14 +1,13 @@
-﻿using System.Linq;
-using QuantitativeTrading.Models;
+﻿using QuantitativeTrading.Models;
 
-namespace QuantitativeTrading.Strategy.ThreeMarkets
+namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
-    public class CloseChange : Strategy, IStrategy
+    public class CloseChange : Strategy
     {
         public CloseChange(int bufferSize, int tradingInterval)
-            :base(bufferSize, tradingInterval) { }
+            : base(bufferSize, tradingInterval) { }
 
-        public StrategyAction PolicyDecision(ThreeMarketsDataProviderModel model)
+        public override StrategyAction PolicyDecision(ThreeMarketsDataProviderModel model)
         {
             buffer.Enqueue(model);
 

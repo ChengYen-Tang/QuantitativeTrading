@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Magicodes.ExporterAndImporter.Core;
 using Magicodes.ExporterAndImporter.Csv;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantitativeTrading.Models.Record;
+using QuantitativeTrading.Models;
 
 namespace QuantitativeTrading.Tests
 {
@@ -15,14 +15,14 @@ namespace QuantitativeTrading.Tests
         [TestMethod]
         public async Task TestRecordAsync()
         {
-            Recorder<ThreeMarketsModel> recorder = new("Test", AppDomain.CurrentDomain.BaseDirectory);
+            Recorder<ThreeMarketsRecordModel> recorder = new("Test", AppDomain.CurrentDomain.BaseDirectory);
             DateTime date = DateTime.Now;
-            recorder.Insert(new ThreeMarketsModel{ CoinBalance1 = 1, Balance = 2, Assets = 3, Date = date });
-            recorder.Insert(new ThreeMarketsModel{ CoinBalance1 = 4, Balance = 5, Assets = 6, Date = date });
+            recorder.Insert(new ThreeMarketsRecordModel{ CoinBalance1 = 1, Balance = 2, Assets = 3, Date = date });
+            recorder.Insert(new ThreeMarketsRecordModel{ CoinBalance1 = 4, Balance = 5, Assets = 6, Date = date });
             await recorder.SaveAsync();
 
             IImporter importer = new CsvImporter();
-            var result = (await importer.Import<ThreeMarketsModel>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Test.csv"))).Data.ToList();
+            var result = (await importer.Import<ThreeMarketsRecordModel>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Test.csv"))).Data.ToList();
             Assert.AreEqual(date.ToString(), result[0].Date.ToString());
             Assert.AreEqual(1, result[0].CoinBalance1);
             Assert.AreEqual(2, result[0].Balance);

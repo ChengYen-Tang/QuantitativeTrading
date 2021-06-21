@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace QuantitativeTrading.Strategy.ThreeMarkets
+namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
     public abstract class Strategy
     {
@@ -16,6 +16,8 @@ namespace QuantitativeTrading.Strategy.ThreeMarkets
 
         public Strategy(int bufferSize, int tradingInterval)
             => (this.bufferSize, this.tradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));
+
+        public abstract StrategyAction PolicyDecision(ThreeMarketsDataProviderModel model);
 
         public BestPath BestCoin1ToCoin2Path(StrategyAction strategyAction)
         {

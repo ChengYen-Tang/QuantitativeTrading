@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QuantitativeTrading.Environment;
+using QuantitativeTrading.Environments;
+using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
 
 namespace QuantitativeTrading.Tests.Environment
@@ -7,7 +8,7 @@ namespace QuantitativeTrading.Tests.Environment
     [TestClass]
     public class ThreeMarketsEnvironmentTests
     {
-        private ThreeMarketsEnvironment env;
+        private SpotEnvironment env;
 
         [TestInitialize]
         public void Init()

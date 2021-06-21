@@ -1,5 +1,6 @@
-﻿using QuantitativeTrading.DataProvider;
-using QuantitativeTrading.Environment;
+﻿using QuantitativeTrading.Data.DataProviders;
+using QuantitativeTrading.Environments;
+using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace QuantitativeTrading.Tests
         public static ThreeMarketsDataProvider ThreeMarketsDataProviderMock()
             => new(CreateThreeMarketsModelMock());
 
-        public static ThreeMarketsModel CreateThreeMarketsModelMock()
+        public static ThreeMarketsDatasetModel CreateThreeMarketsModelMock()
         {
             DateTime now = DateTime.Now;
             KlineModel[] Coin12CoinKlines = new KlineModel[] { 
@@ -33,11 +34,11 @@ namespace QuantitativeTrading.Tests
                 new() { Close = (0.2M / 10) - 0.001M, Date = now.AddMinutes(3) },
                 new() { Close = (0.3M / 12) - 0.001M, Date = now.AddMinutes(4) } };
 
-            return new(Coin12CoinKlines, Coin22CoinKlines, Coin22Coin1Klines);
+            return new() { Coin12CoinKlines = Coin12CoinKlines, Coin22CoinKlines = Coin22CoinKlines, Coin22Coin1Klines = Coin22Coin1Klines };
         }
     }
 
-    public class ThreeMarketsEnvironmentMock : ThreeMarketsEnvironment
+    public class ThreeMarketsEnvironmentMock : SpotEnvironment
     {
         public readonly List<(TradingAction action, TradingMarket market)> Actions;
 
