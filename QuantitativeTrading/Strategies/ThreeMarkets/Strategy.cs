@@ -4,15 +4,12 @@ using System.Linq;
 
 namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
-    public abstract class Strategy
+    public abstract class Strategy : Strategies.Strategy
     {
         protected readonly int bufferSize;
         protected int step = 0;
         protected int tradingInterval;
         protected FixedSizeQueue<ThreeMarketsDataProviderModel> buffer;
-
-        public decimal Coin1ToCoinChange { get { return buffer.Select(item => item.Coin12CoinKline.Change).Sum(); } }
-        public decimal Coin2ToCoinChange { get { return buffer.Select(item => item.Coin22CoinKline.Change).Sum(); } }
 
         public Strategy(int bufferSize, int tradingInterval)
             => (this.bufferSize, this.tradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));

@@ -1,5 +1,6 @@
 ﻿using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Models;
+using QuantitativeTrading.Models.Records.ThreeMarkets;
 
 namespace QuantitativeTrading.Environments.ThreeMarkets
 {
@@ -24,6 +25,19 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
                 (CoinBalance1, CoinBalance2) = TradingAction(action, dataProvider.Current.Coin22Coin1Kline.Close, CoinBalance1, CoinBalance2);
 
             return (Balance, CoinBalance1, CoinBalance2);
+        }
+
+        public override void Recording(Models.Records.IEnvironmentModels record)
+        {
+            IEnvironmentModels spotRecord = record as IEnvironmentModels;
+            spotRecord.Assets = Assets;
+            spotRecord.Balance = Balance;
+            spotRecord.CoinBalance1 = CoinBalance1;
+            spotRecord.CoinBalance2 = CoinBalance2;
+            spotRecord.Date = CurrentKline.Coin12CoinKline.Date;
+            spotRecord.Coin12CoinClose = CurrentKline.Coin12CoinKline.Close;
+            spotRecord.Coin22CoinClose = CurrentKline.Coin22CoinKline.Close;
+            spotRecord.Coin22Coin1Close = CurrentKline.Coin22Coin1Kline.Close;
         }
 
         private (decimal mainBalance, decimal secondaryBalance) TradingAction(TradingAction action, decimal price, decimal mainBalance, decimal secondaryBalance)

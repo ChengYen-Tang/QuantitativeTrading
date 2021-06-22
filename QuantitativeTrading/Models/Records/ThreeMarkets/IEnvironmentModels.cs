@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
-namespace QuantitativeTrading.Models
+namespace QuantitativeTrading.Models.Records.ThreeMarkets
 {
-    public class ThreeMarketsRecordModel
+    public interface IEnvironmentModels : Records.IEnvironmentModels
     {
         public DateTime Date { get; set; }
         public decimal Coin12CoinClose { get; set; }
@@ -12,7 +12,5 @@ namespace QuantitativeTrading.Models
         public decimal Balance { get; set; }
         public decimal CoinBalance1 { get; set; }
         public decimal CoinBalance2 { get; set; }
-        public decimal Coin1ToCoinChange { get; set; }
-        public decimal Coin2ToCoinChange { get; set; }
     }
 }

@@ -3,32 +3,42 @@ using System.Threading.Tasks;
 using QuantitativeTrading.Environments;
 using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
+using QuantitativeTrading.Models.Records;
 using QuantitativeTrading.Strategies.ThreeMarkets;
-using ThreeMarketsRecordModel = QuantitativeTrading.Models.ThreeMarketsRecordModel;
+using IEnvironmentModels = QuantitativeTrading.Models.Records.ThreeMarkets.IEnvironmentModels;
 
 namespace QuantitativeTrading.Runners.ThreeMarkets
 {
-    public class Runner<T>
+    public class Runner<T, U>
         where T : Strategy
+        where U : class, IEnvironmentModels, IStrategyModels, new()
     {
-        private readonly Recorder<ThreeMarketsRecordModel> recorder;
+        private readonly int consoleLineTop;
+        private readonly Recorder<U> recorder;
         private readonly SpotEnvironment environment;
         private readonly T strategy;
 
-        public Runner(T strategy, SpotEnvironment environment, Recorder<ThreeMarketsRecordModel> recorder)
-            => (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
+        public Runner(T strategy, SpotEnvironment environment, Recorder<U> recorder, int? consoleLineTop = null)
+        {
+            (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
+            this.consoleLineTop = consoleLineTop ??= Console.GetCursorPosition().Top;
+        }
 
         public async Task RunAsync()
         {
             while (!environment.IsGameOver)
             {
-                environment.MoveNextTime(out ThreeMarketsDataProviderModel data);
+                ThreeMarketsDataProviderModel data = environment.CurrentKline;
                 StrategyAction action = strategy.PolicyDecision(data);
                 Trading(action);
-                Console.Clear();
+                Console.SetCursorPosition(0, consoleLineTop);
                 Console.WriteLine($"Date: {environment.CurrentKline.Coin12CoinKline.Date}, Assets: {environment.Assets}");
 
-                recorder.Insert(new() { Date = data.Coin12CoinKline.Date, Coin12CoinClose = data.Coin12CoinKline.Close, Coin22CoinClose = data.Coin22CoinKline.Close, Coin22Coin1Close = data.Coin22Coin1Kline.Close, Assets = environment.Assets, Balance = environment.Balance, CoinBalance1 = environment.CoinBalance1, CoinBalance2 = environment.CoinBalance2, Coin1ToCoinChange = strategy.Coin1ToCoinChange, Coin2ToCoinChange = strategy.Coin2ToCoinChange });
+                U record = new();
+                environment.Recording(record);
+                strategy.Recording(record);
+                recorder.Insert(record);
+                environment.MoveNextTime(out _);
             }
 
             await recorder.SaveAsync();

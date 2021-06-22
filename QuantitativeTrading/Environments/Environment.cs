@@ -1,4 +1,5 @@
 ﻿using QuantitativeTrading.Data.DataProviders;
+using QuantitativeTrading.Models.Records;
 using System;
 
 namespace QuantitativeTrading.Environments
@@ -21,6 +22,8 @@ namespace QuantitativeTrading.Environments
 
         public bool MoveNextTime(out U model)
             => dataProvider.MoveNext(out model);
+
+        public abstract void Recording(IEnvironmentModels record);
 
         protected decimal DecimalPointMask(decimal d)
             => Math.Floor(d * smallestUnit) / smallestUnit;
