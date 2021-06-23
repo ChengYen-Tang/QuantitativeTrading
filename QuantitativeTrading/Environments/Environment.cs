@@ -1,6 +1,7 @@
 ﻿using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Models.Records;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Environments
 {
@@ -8,9 +9,9 @@ namespace QuantitativeTrading.Environments
         where T : KlineDataProvider<U>
     {
         public abstract decimal Assets { get; }
-        public bool IsGameOver { get { return Assets <= gameOverAssets || dataProvider.IsEnd; } }
+        public bool IsGameOver => Assets <= gameOverAssets || dataProvider.IsEnd;
         public decimal Balance { get; protected set; }
-        public U CurrentKline { get { return dataProvider.Current; } }
+        public U CurrentKline => dataProvider.Current;
 
         protected readonly decimal handlingFee;
         protected readonly T dataProvider;
@@ -25,6 +26,7 @@ namespace QuantitativeTrading.Environments
 
         public abstract void Recording(IEnvironmentModels record);
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected decimal DecimalPointMask(decimal d)
             => Math.Floor(d * smallestUnit) / smallestUnit;
     }

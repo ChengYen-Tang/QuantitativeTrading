@@ -1,6 +1,6 @@
 ﻿using QuantitativeTrading.Models;
 using System;
-using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
@@ -20,19 +20,20 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         {
             if (strategyAction == StrategyAction.Coin1)
             {
-                decimal temp = 1 * buffer.Last().Coin22CoinKline.Close;
-                return temp / buffer.Last().Coin12CoinKline.Close > 1 * buffer.Last().Coin22Coin1Kline.Close ? BestPath.Path1 : BestPath.Path2;
+                decimal temp = 1 * buffer.Last.Coin22CoinKline.Close;
+                return temp / buffer.Last.Coin12CoinKline.Close > 1 * buffer.Last.Coin22Coin1Kline.Close ? BestPath.Path1 : BestPath.Path2;
             }
 
             if (strategyAction == StrategyAction.Coin2)
             {
-                decimal temp = 1 * buffer.Last().Coin12CoinKline.Close;
-                return temp / buffer.Last().Coin22CoinKline.Close > 1 / buffer.Last().Coin22Coin1Kline.Close ? BestPath.Path1 : BestPath.Path2;
+                decimal temp = 1 * buffer.Last.Coin12CoinKline.Close;
+                return temp / buffer.Last.Coin22CoinKline.Close > 1 / buffer.Last.Coin22Coin1Kline.Close ? BestPath.Path1 : BestPath.Path2;
             }
 
             throw new Exception("輸入只允許 Coin1 or Coin2");
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool CanTrading()
         {
             if (step == tradingInterval)

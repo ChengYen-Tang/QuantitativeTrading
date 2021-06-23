@@ -1,6 +1,7 @@
 ﻿using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records.ThreeMarkets;
+using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Environments.ThreeMarkets
 {
@@ -40,6 +41,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             spotRecord.Coin22Coin1Close = CurrentKline.Coin22Coin1Kline.Close;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private (decimal mainBalance, decimal secondaryBalance) TradingAction(TradingAction action, decimal price, decimal mainBalance, decimal secondaryBalance)
         {
             if (action == Environments.TradingAction.Buy)
@@ -54,6 +56,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private (decimal cost, decimal count) Buy(decimal price, decimal balance)
         {
             decimal buyCount = DecimalPointMask(balance / price);
@@ -61,6 +64,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             return (buyCount * price, DecimalPointMask(buyCount - handlingCost));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private (decimal income, decimal count) Sell(decimal price, decimal balance)
         {
             decimal count = DecimalPointMask(balance);

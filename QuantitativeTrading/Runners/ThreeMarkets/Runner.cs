@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using QuantitativeTrading.Environments;
 using QuantitativeTrading.Environments.ThreeMarkets;
@@ -44,6 +45,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             await recorder.SaveAsync();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Trading(StrategyAction action)
         {
             if (action == StrategyAction.Coin)
@@ -79,6 +81,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void TwoStepTrading(TradingMarket source, TradingMarket target)
         {
             environment.Trading(TradingAction.Sell, source);

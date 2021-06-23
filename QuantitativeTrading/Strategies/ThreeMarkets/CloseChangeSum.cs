@@ -1,14 +1,13 @@
 ﻿using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records;
 using QuantitativeTrading.Models.Records.ThreeMarkets;
-using System.Linq;
 
 namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
     public class CloseChangeSum : Strategy
     {
-        private decimal Coin1ToCoinChange { get { return buffer.Select(item => item.Coin12CoinKline.Change).Sum(); } }
-        private decimal Coin2ToCoinChange { get { return buffer.Select(item => item.Coin22CoinKline.Change).Sum(); } }
+        private decimal Coin1ToCoinChange => buffer.Count > 1 ? (buffer.Last.Coin12CoinKline.Close - buffer.First.Coin12CoinKline.Close) / buffer.First.Coin12CoinKline.Close : 0;
+        private decimal Coin2ToCoinChange => buffer.Count > 1 ? (buffer.Last.Coin22CoinKline.Close - buffer.First.Coin22CoinKline.Close) / buffer.First.Coin22CoinKline.Close : 0;
 
         public CloseChangeSum(int bufferSize, int tradingInterval)
             : base(bufferSize, tradingInterval) { }

@@ -7,7 +7,6 @@ namespace QuantitativeTrading.Data.DataProviders
 {
     public class ThreeMarketsDataProvider : KlineDataProvider<ThreeMarketsDataProviderModel>
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ThreeMarketsDataProvider(ThreeMarketsDatasetModel model)
             => models = Join(model);
 

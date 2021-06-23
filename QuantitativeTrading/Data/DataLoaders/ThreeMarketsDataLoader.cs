@@ -1,4 +1,5 @@
 ﻿using QuantitativeTrading.Models;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace QuantitativeTrading.Data.DataLoaders
@@ -14,6 +15,7 @@ namespace QuantitativeTrading.Data.DataLoaders
         /// <param name="Coin22CoinPath"> ETH 對 USDT 價格的路徑 (1 ETH = X USDT) </param>
         /// <param name="Coin22Coin1Path"> ETH 對 BTC 價格的路徑 (1 ETH = X BTC) </param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static async Task<ThreeMarketsDatasetModel> LoadCsvDataAsync(string Coin12CoinPath, string Coin22CoinPath, string Coin22Coin1Path)
         {
             Task<KlineModel[]>[] tasks = new[] { LoadCSVAsync(Coin12CoinPath), LoadCSVAsync(Coin22CoinPath), LoadCSVAsync(Coin22Coin1Path) };

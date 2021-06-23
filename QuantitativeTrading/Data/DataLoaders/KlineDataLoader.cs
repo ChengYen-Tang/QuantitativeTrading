@@ -3,12 +3,14 @@ using Magicodes.ExporterAndImporter.Csv;
 using MoreLinq.Extensions;
 using QuantitativeTrading.Models;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace QuantitativeTrading.Data.DataLoaders
 {
     public class KlineDataLoader
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected static async Task<KlineModel[]> LoadCSVAsync(string path)
         {
             IImporter importer = new CsvImporter();
