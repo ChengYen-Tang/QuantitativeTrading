@@ -6,22 +6,22 @@ using System.Runtime.CompilerServices;
 namespace QuantitativeTrading.Environments
 {
     public abstract class Environment<T, U>
-        where T : KlineDataProvider<U>
+        where U : KlineDataProvider<T, U>
     {
         public abstract decimal Assets { get; }
         public bool IsGameOver => Assets <= gameOverAssets || dataProvider.IsEnd;
         public decimal Balance { get; protected set; }
-        public U CurrentKline => dataProvider.Current;
+        public T CurrentKline => dataProvider.Current;
 
         protected readonly decimal handlingFee;
-        protected readonly T dataProvider;
+        protected readonly U dataProvider;
         private readonly decimal gameOverAssets;
         private readonly decimal smallestUnit;
 
-        public Environment(T dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
+        public Environment(U dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
             => (this.dataProvider, Balance, this.gameOverAssets, this.handlingFee, this.smallestUnit) = (dataProvider, balance, gameOverAssets, handlingFee / 100, Convert.ToDecimal(Math.Pow(10, smallestUnit)));
 
-        public bool MoveNextTime(out U model)
+        public bool MoveNextTime(out T model)
             => dataProvider.MoveNext(out model);
 
         public abstract void Recording(IEnvironmentModels record);

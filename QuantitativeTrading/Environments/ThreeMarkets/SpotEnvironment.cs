@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Environments.ThreeMarkets
 {
-    public class SpotEnvironment : Environment<ThreeMarketsDataProvider, ThreeMarketsDataProviderModel>
+    public class SpotEnvironment : Environment<ThreeMarketsDataProviderModel, ThreeMarketsDataProvider>
     {
         public override decimal Assets
         { get { return Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close; } }

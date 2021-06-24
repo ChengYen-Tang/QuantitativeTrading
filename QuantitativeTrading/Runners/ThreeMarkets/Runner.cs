@@ -14,16 +14,12 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         where T : Strategy
         where U : class, IEnvironmentModels, IStrategyModels, new()
     {
-        private readonly int consoleLineTop;
         private readonly Recorder<U> recorder;
         private readonly SpotEnvironment environment;
         private readonly T strategy;
 
-        public Runner(T strategy, SpotEnvironment environment, Recorder<U> recorder, int? consoleLineTop = null)
-        {
-            (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
-            this.consoleLineTop = consoleLineTop ??= Console.GetCursorPosition().Top;
-        }
+        public Runner(T strategy, SpotEnvironment environment, Recorder<U> recorder)
+            => (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
 
         public async Task RunAsync()
         {
@@ -32,9 +28,6 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                 ThreeMarketsDataProviderModel data = environment.CurrentKline;
                 StrategyAction action = strategy.PolicyDecision(data);
                 Trading(action);
-                Console.SetCursorPosition(0, consoleLineTop);
-                Console.WriteLine($"Date: {environment.CurrentKline.Coin12CoinKline.Date}, Assets: {environment.Assets}");
-
                 U record = new();
                 environment.Recording(record);
                 strategy.Recording(record);

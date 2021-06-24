@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace QuantitativeTrading.Data.DataProviders
 {
-    public abstract class KlineDataProvider<T> : IEnumerable<T>
+    public abstract class KlineDataProvider<T, U> : IEnumerable<T>
+        where U : KlineDataProvider<T, U>
     {
         public bool IsEnd => index >= models.Count - 1;
         public T this[int index] => models[index];
@@ -24,7 +25,7 @@ namespace QuantitativeTrading.Data.DataProviders
                 model = default;
                 return false;
             }
-
+            
             model = models[index];
             return true;
         }
@@ -38,6 +39,8 @@ namespace QuantitativeTrading.Data.DataProviders
             for (int i = historyIndex; i <= index; i++)
                 yield return models[i];
         }
+
+        public abstract U Clone();
 
         public IEnumerator<T> GetEnumerator()
             => models.GetEnumerator();

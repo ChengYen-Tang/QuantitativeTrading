@@ -1,9 +1,11 @@
+using Magicodes.ExporterAndImporter.Core;
 using System;
 
 namespace QuantitativeTrading.Models.Records.ThreeMarkets
 {
     public class CloseChangeSumRecordModel : IEnvironmentModels, ICloseChangeSumModels
     {
+        [ExporterHeader(Format = "yyyy-MM-dd HH:mm:ss")]
         public DateTime Date { get; set; }
         public decimal Coin12CoinClose { get; set; }
         public decimal Coin22CoinClose { get; set; }
