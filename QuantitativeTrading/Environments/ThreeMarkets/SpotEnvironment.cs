@@ -12,9 +12,11 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         public decimal CoinBalance1 { get; protected set; }
         public decimal CoinBalance2 { get; protected set; }
 
+        public SpotEnvironment(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams)
+            : base(dataProvider, environmentParams) { }
+
         public SpotEnvironment(ThreeMarketsDataProvider dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
-            : base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit)
-        { }
+            : base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit) { }
 
         public virtual (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
         {

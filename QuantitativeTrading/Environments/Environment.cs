@@ -18,6 +18,9 @@ namespace QuantitativeTrading.Environments
         private readonly decimal gameOverAssets;
         private readonly decimal smallestUnit;
 
+        public Environment(U dataProvider, EnvironmentParams environmentParams)
+            => (this.dataProvider, Balance, gameOverAssets, handlingFee, smallestUnit) = (dataProvider, environmentParams.Balance, environmentParams.GameOverAssets, environmentParams.HandlingFee, environmentParams.SmallestUnit);
+
         public Environment(U dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
             => (this.dataProvider, Balance, this.gameOverAssets, this.handlingFee, this.smallestUnit) = (dataProvider, balance, gameOverAssets, handlingFee / 100, Convert.ToDecimal(Math.Pow(10, smallestUnit)));
 
@@ -30,6 +33,8 @@ namespace QuantitativeTrading.Environments
         protected decimal DecimalPointMask(decimal d)
             => Math.Floor(d * smallestUnit) / smallestUnit;
     }
+
+    public record EnvironmentParams(decimal Balance, decimal GameOverAssets, decimal HandlingFee, int SmallestUnit);
 
     public enum TradingAction
     {

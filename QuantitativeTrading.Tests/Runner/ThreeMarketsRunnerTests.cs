@@ -20,7 +20,7 @@ namespace QuantitativeTrading.Tests.Runner
         {
             closeChange = new(1, 1);
             env = new();
-            runner = new(closeChange, env, null, 0);
+            runner = new(closeChange, env, null);
             privateObject = new(runner);
         }
 

@@ -3,7 +3,7 @@ using System;
 
 namespace QuantitativeTrading.Models
 {
-    public class CloseChangeSumCombinationModels
+    public class ThreeMarketsCombinationModels
     {
         public string Combination { get; set; }
         public decimal Assets { get; set; }
