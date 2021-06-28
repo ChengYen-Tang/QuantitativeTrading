@@ -5,13 +5,24 @@ using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Environments.ThreeMarkets
 {
+    /// <summary>
+    /// 現貨回測環境
+    /// </summary>
     public class SpotEnvironment : Environment<ThreeMarketsDataProviderModel, ThreeMarketsDataProvider>
     {
-        public override decimal Assets
-        { get { return Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close; } }
+        /// <summary>
+        /// 資產
+        /// </summary>
+        public override decimal Assets => Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close;
+        /// <summary>
+        /// Coin1 的餘額
+        /// </summary>
         public decimal CoinBalance1 { get; protected set; }
+        /// <summary>
+        /// Coin2 的餘額
+        /// </summary>
         public decimal CoinBalance2 { get; protected set; }
-
+        
         public SpotEnvironment(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams)
             : base(dataProvider, environmentParams) { }
 

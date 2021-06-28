@@ -9,6 +9,11 @@ using IEnvironmentModels = QuantitativeTrading.Models.Records.ThreeMarkets.IEnvi
 
 namespace QuantitativeTrading.Runners.ThreeMarkets
 {
+    /// <summary>
+    /// 執行三角市場回測的模組
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
     public class Runner<T, U>
         where T : Strategy
         where U : class, IEnvironmentModels, IStrategyModels, new()
@@ -17,9 +22,19 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         private readonly SpotEnvironment environment;
         private readonly T strategy;
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="strategy"> 策略 </param>
+        /// <param name="environment"> 回測環境 </param>
+        /// <param name="recorder"> 交易紀錄器 </param>
         public Runner(T strategy, SpotEnvironment environment, Recorder<U> recorder)
             => (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
 
+        /// <summary>
+        /// 開始回測，直到資料集結束或設定環境的低於最低餘額
+        /// </summary>
+        /// <returns></returns>
         public async Task RunAsync()
         {
             while (!environment.IsGameOver)
@@ -37,6 +52,13 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             await recorder.SaveAsync();
         }
 
+        /// <summary>
+        /// 執行交易動作
+        /// 檢查環境的資產在哪個幣上面
+        /// 根據策略結果決定如何交易
+        /// 例: 用 USDT 買 BTC
+        /// </summary>
+        /// <param name="action"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Trading(StrategyAction action)
         {
@@ -73,6 +95,12 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             }
         }
 
+        /// <summary>
+        /// 兩步驟交易
+        /// 賣掉彼特幣，買乙太幣
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void TwoStepTrading(TradingMarket source, TradingMarket target)
         {
