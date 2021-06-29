@@ -10,9 +10,9 @@ namespace QuantitativeTrading.Tests.Runner
     [TestClass]
     public class ThreeMarketsRunnerTests
     {
-        private CloseChangeSum closeChange;
+        private CloseChange closeChange;
         private PrivateObject privateObject;
-        private Runner<CloseChangeSum, CloseChangeSumRecordModel> runner;
+        private Runner<CloseChange, CloseChangeRecordModel> runner;
         private ThreeMarketsEnvironmentMock env;
 
         [TestInitialize]

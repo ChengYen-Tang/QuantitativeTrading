@@ -22,13 +22,32 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// Coin2 的餘額
         /// </summary>
         public decimal CoinBalance2 { get; protected set; }
-        
+
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="dataProvider"> 回測資料 </param>
+        /// <param name="environmentParams"> 回測環境參數 </param>
         public SpotEnvironment(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams)
             : base(dataProvider, environmentParams) { }
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="dataProvider"> 回測資料 </param>
+        /// <param name="balance"> 初始餘額 </param>
+        /// <param name="gameOverAssets"> 破產資產 </param>
+        /// <param name="handlingFee"> 手續費% </param>
+        /// <param name="smallestUnit"> 最小交易單位(小數點後幾位) </param>
         public SpotEnvironment(ThreeMarketsDataProvider dataProvider, decimal balance, decimal gameOverAssets, decimal handlingFee, int smallestUnit)
             : base(dataProvider, balance, gameOverAssets, handlingFee, smallestUnit) { }
 
+        /// <summary>
+        /// 交易
+        /// </summary>
+        /// <param name="action"> 動作(買/賣) </param>
+        /// <param name="market"> 市場 (BTCUSDT, ETHUSDT, ETHBTC) </param>
+        /// <returns></returns>
         public virtual (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
         {
             if (market == TradingMarket.Coin12Coin)
@@ -41,6 +60,10 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             return (Balance, CoinBalance1, CoinBalance2);
         }
 
+        /// <summary>
+        /// 紀錄資料
+        /// </summary>
+        /// <param name="record"></param>
         public override void Recording(Models.Records.IEnvironmentModels record)
         {
             IEnvironmentModels spotRecord = record as IEnvironmentModels;
@@ -69,6 +92,12 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             }
         }
 
+        /// <summary>
+        /// 買的動作
+        /// </summary>
+        /// <param name="price"> 當前價錢 </param>
+        /// <param name="balance"> 當前餘額 </param>
+        /// <returns> (需要消耗多少成本, 能買多少單位) </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private (decimal cost, decimal count) Buy(decimal price, decimal balance)
         {
@@ -77,6 +106,12 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             return (buyCount * price, DecimalPointMask(buyCount - handlingCost));
         }
 
+        /// <summary>
+        /// 賣的動作
+        /// </summary>
+        /// <param name="price"> 當前價錢 </param>
+        /// <param name="balance"> 當前餘額 </param>
+        /// <returns> (得到多少錢， 賣了多少單位) </returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private (decimal income, decimal count) Sell(decimal price, decimal balance)
         {

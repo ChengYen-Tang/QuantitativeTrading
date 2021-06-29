@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
+    /// <summary>
+    /// 三市場策略
+    /// </summary>
     public abstract class Strategy : Strategies.Strategy
     {
         protected readonly int bufferSize;
@@ -11,11 +14,30 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         protected int tradingInterval;
         protected FixedSizeQueue<ThreeMarketsDataProviderModel> buffer;
 
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        /// <param name="bufferSize"> 需要觀察的天數 </param>
+        /// <param name="tradingInterval"> 每次交易的間隔 </param>
         public Strategy(int bufferSize, int tradingInterval)
             => (this.bufferSize, this.tradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));
 
+        /// <summary>
+        /// 運行策略
+        /// </summary>
+        /// <param name="model"> 當下的市場資訊 </param>
+        /// <returns></returns>
         public abstract StrategyAction PolicyDecision(ThreeMarketsDataProviderModel model);
 
+        /// <summary>
+        /// 從 Coin1 交易到 Coin2 最佳的路徑
+        /// 
+        /// 例: BTC -> ETH
+        /// Path1: sell btc -> buy eth (3 point: btc -> usdt -> eth)
+        /// Path2: buy eth (2 point: btc -> eth)
+        /// </summary>
+        /// <param name="strategyAction"></param>
+        /// <returns></returns>
         public BestPath BestCoin1ToCoin2Path(StrategyAction strategyAction)
         {
             if (strategyAction == StrategyAction.Coin1)
@@ -33,6 +55,10 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
             throw new Exception("輸入只允許 Coin1 or Coin2");
         }
 
+        /// <summary>
+        /// 是否到達交易間格次數
+        /// </summary>
+        /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool CanTrading()
         {

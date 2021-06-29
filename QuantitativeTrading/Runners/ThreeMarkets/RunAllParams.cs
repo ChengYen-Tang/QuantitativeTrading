@@ -31,7 +31,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <param name="tradingIntervals"> 交易頻率(多久交易一次) </param>
         /// <param name="savePath"> 存檔位置 </param>
         /// <returns></returns>
-        public static async Task RunCloseChangeSumAllParams(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams, int[] observationTimes, int[] tradingIntervals, string savePath)
+        public static async Task RunCloseChangeAllParams(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams, int[] observationTimes, int[] tradingIntervals, string savePath)
         {
             List<(int observationTime, int tradingInterval)> combinations = new();
             ConcurrentBag<ThreeMarketsCombinationModels> results = new();
@@ -41,9 +41,9 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
 
             Parallel.ForEach(combinations, new ParallelOptions { MaxDegreeOfParallelism = 6 }, (combination) =>
             {
-                CloseChangeSum strategy = new(combination.observationTime, combination.tradingInterval);
+                CloseChange strategy = new(combination.observationTime, combination.tradingInterval);
                 string combinationName = $"{Utils.MinuteToHrOrDay(combination.observationTime)}-{Utils.MinuteToHrOrDay(combination.tradingInterval)}";
-                ThreeMarketsCombinationModels result = RunParams<CloseChangeSumRecordModel>(dataProvider, strategy, environmentParams, combinationName, savePath).Result;
+                ThreeMarketsCombinationModels result = RunParams<CloseChangeRecordModel>(dataProvider, strategy, environmentParams, combinationName, savePath).Result;
                 results.Add(result);
                 counter++;
                 Console.WriteLine(counter);

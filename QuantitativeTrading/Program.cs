@@ -22,7 +22,7 @@ namespace QuantitativeTrading
             ThreeMarketsDataProvider dataProvider = new(dataset);
             EnvironmentParams environmentParams = new(20000, 10000, 0.1m, 3);
 
-            await RunAllParams.RunCloseChangeSumAllParams(dataProvider, environmentParams, observationTimes, tradingIntervals, savePath);
+            await RunAllParams.RunCloseChangeAllParams(dataProvider, environmentParams, observationTimes, tradingIntervals, savePath);
         }
     }
 }

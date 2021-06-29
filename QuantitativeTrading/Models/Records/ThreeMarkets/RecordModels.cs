@@ -3,7 +3,7 @@ using System;
 
 namespace QuantitativeTrading.Models.Records.ThreeMarkets
 {
-    public class CloseChangeSumRecordModel : IEnvironmentModels, ICloseChangeSumModels
+    public class CloseChangeRecordModel : IEnvironmentModels, ICloseChangeModels
     {
         [ExporterHeader(Format = "yyyy-MM-dd HH:mm:ss")]
         public DateTime Date { get; set; }
