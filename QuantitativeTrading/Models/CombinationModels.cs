@@ -12,5 +12,7 @@ namespace QuantitativeTrading.Models
         public decimal CoinBalance2 { get; set; }
         [ExporterHeader(Format = "yyyy-MM-dd HH:mm:ss")]
         public DateTime EndDate { get; set; }
+        public int ObservationTime { get; set; }
+        public int TradingInterval { get; set; }
     }
 }

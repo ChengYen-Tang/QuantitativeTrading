@@ -9,10 +9,11 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
     /// </summary>
     public abstract class Strategy : Strategies.Strategy
     {
-        protected readonly int bufferSize;
         protected int step = 0;
-        protected int tradingInterval;
         protected FixedSizeQueue<ThreeMarketsDataProviderModel> buffer;
+
+        public readonly int ObservationTime;
+        public int TradingInterval { get; protected set; }
 
         /// <summary>
         /// 初始化
@@ -20,7 +21,7 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         /// <param name="bufferSize"> 需要觀察的天數 </param>
         /// <param name="tradingInterval"> 每次交易的間隔 </param>
         public Strategy(int bufferSize, int tradingInterval)
-            => (this.bufferSize, this.tradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));
+            => (ObservationTime, TradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));
 
         /// <summary>
         /// 運行策略
@@ -62,7 +63,7 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool CanTrading()
         {
-            if (step == tradingInterval)
+            if (step == TradingInterval)
             {
                 step = 0;
                 return true;

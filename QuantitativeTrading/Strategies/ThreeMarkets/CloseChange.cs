@@ -37,7 +37,7 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         {
             buffer.Enqueue(model);
 
-            if (buffer.Count < bufferSize || !CanTrading())
+            if (buffer.Count < ObservationTime || !CanTrading())
                 return StrategyAction.WaitBuffer;
 
             step = 0;

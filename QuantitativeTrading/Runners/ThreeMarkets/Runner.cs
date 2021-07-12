@@ -42,14 +42,18 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                 ThreeMarketsDataProviderModel data = environment.CurrentKline;
                 StrategyAction action = strategy.PolicyDecision(data);
                 Trading(action);
-                U record = new();
-                environment.Recording(record);
-                strategy.Recording(record);
-                recorder.Insert(record);
+                if (recorder is not null)
+                {
+                    U record = new();
+                    environment.Recording(record);
+                    strategy.Recording(record);
+                    recorder.Insert(record);
+                }
                 environment.MoveNextTime(out _);
             }
 
-            await recorder.SaveAsync();
+            if (recorder is not null)
+                await recorder.SaveAsync();
         }
 
         /// <summary>
