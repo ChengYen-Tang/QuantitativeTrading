@@ -1,32 +1,33 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace QuantitativeTrading.Data.DataProviders
 {
     public abstract class KlineDataProvider<T, U> : IEnumerable<T>
         where U : KlineDataProvider<T, U>
     {
-        public bool IsEnd => index >= models.Count - 1;
-        public T this[int index] => models[index];
-        public T Current => models[index];
-        public long Length => models.Count;
+        public bool IsEnd => Index >= models.Length - 1;
+        public T this[int Index] => models[Index];
+        public T Current => models[Index];
+        public long Length => models.Length;
 
-        protected List<T> models;
+        protected T[] models;
 
-        private int index = 0;
+        public int Index { get; protected set; } = 0;
 
-        public void Reset() => index = 0;
+        public void Reset() => Index = 0;
 
         public bool MoveNext(out T model)
         {
-            index++;
+            Index++;
             if (IsEnd)
             {
                 model = default;
                 return false;
             }
             
-            model = models[index];
+            model = models[Index];
             return true;
         }
 
@@ -34,16 +35,18 @@ namespace QuantitativeTrading.Data.DataProviders
         {
             int timePoint = historyPoint - 1;
             int historyIndex = 0;
-            if (index > timePoint)
-                historyIndex = index - timePoint;
-            for (int i = historyIndex; i <= index; i++)
+            if (Index > timePoint)
+                historyIndex = Index - timePoint;
+            for (int i = historyIndex; i <= Index; i++)
                 yield return models[i];
         }
 
         public abstract U Clone();
 
+        public abstract U Clone(int startIndex, int length);
+
         public IEnumerator<T> GetEnumerator()
-            => models.GetEnumerator();
+            => models.Cast<T>().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
             => models.GetEnumerator();

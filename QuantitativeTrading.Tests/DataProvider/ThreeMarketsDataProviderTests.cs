@@ -71,5 +71,36 @@ namespace QuantitativeTrading.Tests.DataProvider
             Assert.AreEqual(5, models.Count());
             Assert.AreEqual(model, models.ToArray()[4]);
         }
+
+        [TestMethod]
+        public void TestCloneAll()
+        {
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            Assert.AreEqual(5, provider.Index);
+
+            var cloneObject = provider.Clone();
+            Assert.AreEqual(provider[0], cloneObject.Current);
+        }
+
+        [TestMethod]
+        public void TestCloneFromIndex()
+        {
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            provider.MoveNext(out _);
+            Assert.AreEqual(5, provider.Index);
+
+            var cloneObject = provider.Clone(3, 3);
+            Assert.AreEqual(3, cloneObject.Length);
+            Assert.AreEqual(provider[3], cloneObject[0]);
+            Assert.AreEqual(provider[4], cloneObject[1]);
+            Assert.AreEqual(provider[5], cloneObject[2]);
+        }
     }
 }
