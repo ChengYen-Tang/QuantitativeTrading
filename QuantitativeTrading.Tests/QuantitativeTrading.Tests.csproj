@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="TestFiles\" />
-    <Folder Include="Runner\" />
   </ItemGroup>
 
   <ItemGroup>

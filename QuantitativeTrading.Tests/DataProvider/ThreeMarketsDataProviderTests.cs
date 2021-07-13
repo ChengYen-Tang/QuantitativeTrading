@@ -11,13 +11,14 @@ namespace QuantitativeTrading.Tests.DataProvider
     [TestClass]
     public class ThreeMarketsDataProviderTests
     {
-        private readonly ThreeMarketsDataProvider provider;
+        private static ThreeMarketsDataProvider provider;
 
-        public ThreeMarketsDataProviderTests()
+        [ClassInitialize]
+        public static void ClassInit(TestContext _)
             => provider = new(ThreeMarketsDataLoader.LoadCsvDataAsync(Utils.btc_usdtPath, Utils.eth_usdtPath, Utils.eth_btcPath).Result);
 
         [TestInitialize]
-        public void Init()
+        public void TestInit()
             => provider.Reset();
 
         [TestMethod]

@@ -63,9 +63,10 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool CanTrading()
         {
-            if (step == TradingInterval)
+            if (step % TradingInterval == 0)
             {
                 step = 0;
+                step++;
                 return true;
             }
 
