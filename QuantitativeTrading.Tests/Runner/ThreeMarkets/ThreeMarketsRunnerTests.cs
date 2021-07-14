@@ -5,7 +5,7 @@ using QuantitativeTrading.Models.Records.ThreeMarkets;
 using QuantitativeTrading.Runners.ThreeMarkets;
 using QuantitativeTrading.Strategies.ThreeMarkets;
 
-namespace QuantitativeTrading.Tests.Runner
+namespace QuantitativeTrading.Tests.Runner.ThreeMarkets
 {
     [TestClass]
     public class ThreeMarketsRunnerTests
