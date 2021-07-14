@@ -40,7 +40,6 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
             if (buffer.Count < ObservationTime || !CanTrading())
                 return StrategyAction.WaitBuffer;
 
-            step = 0;
             if (Coin1ToCoinChange < 0 && Coin2ToCoinChange < 0)
                 return StrategyAction.Coin;
             if (Coin1ToCoinChange > Coin2ToCoinChange)

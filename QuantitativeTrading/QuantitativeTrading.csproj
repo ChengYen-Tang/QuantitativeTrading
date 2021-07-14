@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Magicodes.IE.Csv" Version="2.5.4.3" />
+    <PackageReference Include="Magicodes.IE.Csv" Version="2.5.4.6" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
   
