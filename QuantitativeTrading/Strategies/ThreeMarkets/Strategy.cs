@@ -12,8 +12,17 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         protected int step = 0;
         protected FixedSizeQueue<ThreeMarketsDataProviderModel> buffer;
 
-        public readonly int ObservationTime;
+        public int ObservationTime => buffer.Size;
         public int TradingInterval { get; protected set; }
+
+        /// <summary>
+        /// 貨幣1 價格漲跌幅%
+        /// </summary>
+        protected decimal Coin1ToCoinChange => buffer.Count > 1 ? (buffer.Last.Coin12CoinKline.Close - buffer.First.Coin12CoinKline.Close) / buffer.First.Coin12CoinKline.Close : 0;
+        /// <summary>
+        /// 貨幣2 價格漲跌幅%
+        /// </summary>
+        protected decimal Coin2ToCoinChange => buffer.Count > 1 ? (buffer.Last.Coin22CoinKline.Close - buffer.First.Coin22CoinKline.Close) / buffer.First.Coin22CoinKline.Close : 0;
 
         /// <summary>
         /// 初始化
@@ -21,7 +30,7 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         /// <param name="bufferSize"> 需要觀察的天數 </param>
         /// <param name="tradingInterval"> 每次交易的間隔 </param>
         public Strategy(int bufferSize, int tradingInterval)
-            => (ObservationTime, TradingInterval, buffer) = (bufferSize, tradingInterval, new(bufferSize));
+            => (TradingInterval, buffer) = (tradingInterval, new(bufferSize));
 
         /// <summary>
         /// 運行策略
