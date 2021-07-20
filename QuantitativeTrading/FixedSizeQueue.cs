@@ -27,6 +27,8 @@ namespace QuantitativeTrading
             DequeueWhenFull();
             // To enqueue
             base.Enqueue(item);
+
+            //  這邊有Bug
             CopyTo(queueArray, 0);
         }
 

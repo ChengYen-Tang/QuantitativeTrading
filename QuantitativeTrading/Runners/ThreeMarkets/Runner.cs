@@ -18,9 +18,9 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         where T : Strategy
         where U : class, IEnvironmentModels, IStrategyModels, new()
     {
-        private readonly Recorder<U> recorder;
-        private readonly SpotEnvironment environment;
-        private readonly T strategy;
+        protected readonly Recorder<U> recorder;
+        protected readonly SpotEnvironment environment;
+        protected readonly T strategy;
 
         /// <summary>
         /// 初始化
@@ -35,7 +35,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// 開始回測，直到資料集結束或設定環境的低於最低餘額
         /// </summary>
         /// <returns></returns>
-        public async Task RunAsync()
+        public virtual async Task RunAsync()
         {
             while (!environment.IsGameOver)
             {
@@ -64,7 +64,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// </summary>
         /// <param name="action"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Trading(StrategyAction action)
+        protected void Trading(StrategyAction action)
         {
             if (action == StrategyAction.Coin)
             {

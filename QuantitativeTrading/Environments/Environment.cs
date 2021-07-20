@@ -77,6 +77,13 @@ namespace QuantitativeTrading.Environments
             => dataProvider.MoveNext(out model);
 
         /// <summary>
+        /// 複製一份當前狀態的 data provider
+        /// </summary>
+        /// <returns></returns>
+        public U CloneCurrentDataProvider()
+            => dataProvider.CloneAllStatus();
+
+        /// <summary>
         /// 紀錄環境狀態
         /// </summary>
         /// <param name="record"></param>

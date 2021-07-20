@@ -8,6 +8,9 @@ namespace QuantitativeTrading.Data.DataProviders
     {
         private ThreeMarketsDataProvider() { }
 
+        public ThreeMarketsDataProvider(int index)
+            => Index = index;
+
         public ThreeMarketsDataProvider(ThreeMarketsDatasetModel model)
             => models = Join(model);
 
@@ -23,5 +26,8 @@ namespace QuantitativeTrading.Data.DataProviders
 
         public override ThreeMarketsDataProvider Clone(int startIndex, int length)
             => new() { models = models[startIndex..(startIndex + length)] };
+
+        public override ThreeMarketsDataProvider CloneAllStatus()
+            => new(Index);
     }
 }

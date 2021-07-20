@@ -3,8 +3,11 @@ using System.Threading.Tasks;
 using QuantitativeTrading.Data.DataLoaders;
 using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Environments;
+using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
+using QuantitativeTrading.Models.Records.ThreeMarkets;
 using QuantitativeTrading.Runners.ThreeMarkets;
+using QuantitativeTrading.Strategies.ThreeMarkets;
 
 namespace QuantitativeTrading
 {
@@ -15,14 +18,12 @@ namespace QuantitativeTrading
 
         static async Task Main(string[] args)
         {
-            
-            int[] observationTimes = new int[] { 3, 5, 15, 30, 60, 120, 240, 360, 480, 720, 1440, 4320, 10080, 20160, 30240, 40320 };
-            int[] tradingIntervals = new int[] { 1, 3, 5, 15, 30, 60, 120, 240, 360, 480, 720, 1440 };
             ThreeMarketsDatasetModel dataset = await ThreeMarketsDataLoader.LoadCsvDataAsync(Path.Combine(datasetPath, "BTCUSDT-Spot.csv"), Path.Combine(datasetPath, "ETHUSDT-Spot.csv"), Path.Combine(datasetPath, "ETHBTC-Spot.csv"));
             ThreeMarketsDataProvider dataProvider = new(dataset);
             EnvironmentParams environmentParams = new(20000, 10000, 0.1m, 3);
-
-            await RunAllParams.RunCloseChangeAllParams(dataProvider, environmentParams, observationTimes, tradingIntervals, savePath);
+            SpotEnvironment env = new(dataProvider, environmentParams);
+            AutoParamsCloseChangeRunner<AutoParamsCloseChange, AutoParamsCloseChangeRecordModel> runner = new(new(), env, new("AutoParamsCloseChangeRunner", savePath));
+            await runner.RunAsync();
         }
     }
 }

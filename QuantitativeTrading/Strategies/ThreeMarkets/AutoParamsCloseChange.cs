@@ -6,9 +6,9 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
     /// <summary>
     /// 自動探索滾動最大漲跌幅參數策略
     /// </summary>
-    public class AutoParamsCloseChange : CloseChange
+    public class AutoParamsCloseChange : CloseChange, IAutoParams
     {
-        public AutoParamsCloseChange() : base(12, 12) { }
+        public AutoParamsCloseChange() : base(720, 720) { }
 
         /// <summary>
         /// 更新策略的參數

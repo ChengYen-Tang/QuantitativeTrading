@@ -45,6 +45,8 @@ namespace QuantitativeTrading.Data.DataProviders
 
         public abstract U Clone(int startIndex, int length);
 
+        public abstract U CloneAllStatus();
+
         public IEnumerator<T> GetEnumerator()
             => models.Cast<T>().GetEnumerator();
 
