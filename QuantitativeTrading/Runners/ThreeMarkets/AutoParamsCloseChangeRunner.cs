@@ -4,6 +4,7 @@ using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records;
 using QuantitativeTrading.Strategies;
 using QuantitativeTrading.Strategies.ThreeMarkets;
+using System;
 using System.Threading.Tasks;
 using IEnvironmentModels = QuantitativeTrading.Models.Records.ThreeMarkets.IEnvironmentModels;
 using Strategy = QuantitativeTrading.Strategies.ThreeMarkets.Strategy;
@@ -49,6 +50,8 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                     strategy.Recording(record);
                     recorder.Insert(record);
                 }
+
+                Console.WriteLine($"Date: {environment.CurrentKline.Coin12CoinKline.Date}, Asset: {environment.Assets}, 觀察: {strategy.ObservationTime}, 交易間隔: {strategy.TradingInterval}");
                 environment.MoveNextTime(out _);
             }
 

@@ -28,6 +28,6 @@ namespace QuantitativeTrading.Data.DataProviders
             => new() { models = models[startIndex..(startIndex + length)] };
 
         public override ThreeMarketsDataProvider CloneAllStatus()
-            => new(Index);
+            => new(Index) { models = models };
     }
 }

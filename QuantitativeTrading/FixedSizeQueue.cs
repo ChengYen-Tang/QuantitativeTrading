@@ -5,7 +5,7 @@ namespace QuantitativeTrading
 {
     public class FixedSizeQueue<T> : Queue<T>
     {
-        private readonly T[] queueArray;
+        private T[] queueArray;
 
         public int Size { get; private set; }
         public T this[int index] => queueArray[index];
@@ -13,13 +13,14 @@ namespace QuantitativeTrading
         public T Last => queueArray[Count - 1];
 
         public FixedSizeQueue(int size)
-            : base(size)
             => (queueArray, Size) = (new T[size], size);
 
         public void Resize(int size)
         {
             Size = size;
             DequeueWhenFull();
+            queueArray = new T[size];
+            CopyTo(queueArray, 0);
         }
 
         public new void Enqueue(T item)

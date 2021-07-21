@@ -76,8 +76,6 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                 ThreeMarketsCombinationModels result = RunPartDatasetParams<CloseChangeRecordModel>(dataProvider, strategy, environmentParams).Result;
                 
                 results.Add(result);
-                counter++;
-                Console.WriteLine(counter);
             });
 
             ThreeMarketsCombinationModels bestParms = results.AsQueryable().OrderByDescending(item => item.Assets).First();
