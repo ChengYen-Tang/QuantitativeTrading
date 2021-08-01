@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Magicodes.IE.Csv" Version="2.5.4.8" />
+    <PackageReference Include="Binance.Net" Version="6.13.5" />
+    <PackageReference Include="Magicodes.IE.Csv" Version="2.5.4.9" />
     <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
   
