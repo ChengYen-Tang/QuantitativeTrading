@@ -9,7 +9,7 @@ namespace QuantitativeTrading
     {
         static async Task Main(string[] args)
         {
-            IEnumerable<string> symbols = new[] { "BTCUSDT", "ETHUSDT", "ETHBTC" };
+            string[] symbols = new[] { "BTCUSDT", "ETHUSDT", "ETHBTC" };
             using BinanceSpot binanceSpot= new(symbols);
             binanceSpot.Run();
 
