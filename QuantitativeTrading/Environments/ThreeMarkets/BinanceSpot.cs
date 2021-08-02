@@ -3,7 +3,6 @@ using Binance.Net.Enums;
 using Binance.Net.Interfaces;
 using QuantitativeTrading.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,14 +10,15 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
 {
     public class BinanceSpot : IDisposable
     {
+        private readonly BinanceClient client;
         private readonly BinanceSocketClient socketClient;
         private readonly ContinuousResetEvent continuousResetEvent;
-        private readonly IEnumerable<string> symbols;
+        private readonly string[] symbols;
         private readonly ThreeMarketsDataProviderModel dataProvider;
 
         private bool disposedValue;
 
-        public BinanceSpot(IEnumerable<string> symbols)
+        public BinanceSpot(string[] symbols)
             => (socketClient, continuousResetEvent, this.symbols, dataProvider) = (new(), new(45, 1000), symbols, new());
 
         public void Run()
@@ -51,8 +51,32 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             return new ThreeMarketsDataProviderModel(dataProvider);
         }
 
+        public async Task TradingAsync(TradingAction action, TradingMarket market)
+        {
+            Task cancelOrder1 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[0]);
+            Task cancelOrder2 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[1]);
+            Task cancelOrder3 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[2]);
+            await Task.WhenAll(cancelOrder1, cancelOrder2, cancelOrder3);
+            await client.Spot.Order.PlaceOrderAsync(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market);
+        }
+
         public async Task CloseAsync()
             => await socketClient.UnsubscribeAll();
+
+
+        private static KlineModel ToKlineModel(IBinanceStreamKline data)
+            => new() { Open = data.Open, Close = data.Close, Date = data.CloseTime, High = data.High, Low = data.Low, Money = data.QuoteVolume, Volume = data.BaseVolume, TakerBuyBaseVolume = data.TakerBuyBaseVolume, TakerBuyQuoteVolume = data.TakerBuyQuoteVolume, TradeCount = data.TradeCount };
+
+        private string MarketToSymbol(TradingMarket market)
+            => (market) switch
+            {
+                TradingMarket.Coin22Coin => symbols[1],
+                TradingMarket.Coin22Coin1 => symbols[2],
+                _ => symbols[0]
+            };
+
+        private static OrderSide ActionToOrderSide(TradingAction action)
+            =>  action == TradingAction.Buy ? OrderSide.Buy : OrderSide.Sell;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -69,9 +93,6 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
                 disposedValue = true;
             }
         }
-
-        private static KlineModel ToKlineModel(IBinanceStreamKline data)
-            => new() { Open = data.Open, Close = data.Close, Date = data.CloseTime, High = data.High, Low = data.Low, Money = data.QuoteVolume, Volume = data.BaseVolume, TakerBuyBaseVolume = data.TakerBuyBaseVolume, TakerBuyQuoteVolume = data.TakerBuyQuoteVolume, TradeCount = data.TradeCount };
 
         // TODO: 僅有當 'Dispose(bool disposing)' 具有會釋出非受控資源的程式碼時，才覆寫完成項
         ~BinanceSpot()
