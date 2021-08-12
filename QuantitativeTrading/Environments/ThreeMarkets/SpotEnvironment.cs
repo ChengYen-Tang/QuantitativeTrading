@@ -8,7 +8,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
     /// <summary>
     /// 現貨回測環境
     /// </summary>
-    public class SpotEnvironment : Environment<ThreeMarketsDataProviderModel, ThreeMarketsDataProvider>
+    public class SpotEnvironment : Environment<ThreeMarketsDataProviderModel, ThreeMarketsDataProvider>, IThreeMarketEnvironment
     {
         /// <summary>
         /// 資產
@@ -48,7 +48,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// <param name="action"> 動作(買/賣) </param>
         /// <param name="market"> 市場 (BTCUSDT, ETHUSDT, ETHBTC) </param>
         /// <returns></returns>
-        public virtual (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
+        public virtual void Trading(TradingAction action, TradingMarket market)
         {
             if (market == TradingMarket.Coin12Coin)
                 (Balance, CoinBalance1) = TradingAction(action, dataProvider.Current.Coin12CoinKline.Close, Balance, CoinBalance1);
@@ -56,8 +56,6 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
                 (Balance, CoinBalance2) = TradingAction(action, dataProvider.Current.Coin22CoinKline.Close, Balance, CoinBalance2);
             if (market == TradingMarket.Coin22Coin1)
                 (CoinBalance1, CoinBalance2) = TradingAction(action, dataProvider.Current.Coin22Coin1Kline.Close, CoinBalance1, CoinBalance2);
-
-            return (Balance, CoinBalance1, CoinBalance2);
         }
 
         /// <summary>

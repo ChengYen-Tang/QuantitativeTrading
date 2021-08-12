@@ -9,8 +9,7 @@ namespace QuantitativeTrading
     {
         static async Task Main(string[] args)
         {
-            string[] symbols = new[] { "BTCUSDT", "ETHUSDT", "ETHBTC" };
-            using BinanceSpot binanceSpot= new(symbols);
+            using BinanceSpot binanceSpot= new("USDT", "BTC", "ETH");
             binanceSpot.Run();
 
             while(true)

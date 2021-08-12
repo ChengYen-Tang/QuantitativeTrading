@@ -1,25 +1,45 @@
 ﻿using Binance.Net;
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
+using Binance.Net.Objects.Spot.SpotData;
+using CryptoExchange.Net.Objects;
 using QuantitativeTrading.Models;
+using QuantitativeTrading.Models.Records.ThreeMarkets;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace QuantitativeTrading.Environments.ThreeMarkets
 {
-    public class BinanceSpot : IDisposable
+    public class BinanceSpot : IThreeMarketEnvironment, IDisposable
     {
         private readonly BinanceClient client;
         private readonly BinanceSocketClient socketClient;
         private readonly ContinuousResetEvent continuousResetEvent;
+        private readonly string[] coinNames;
         private readonly string[] symbols;
         private readonly ThreeMarketsDataProviderModel dataProvider;
 
         private bool disposedValue;
+        private Dictionary<string, BinanceBalance> balances;
 
-        public BinanceSpot(string[] symbols)
-            => (socketClient, continuousResetEvent, this.symbols, dataProvider) = (new(), new(45, 1000), symbols, new());
+        public decimal Assets => Balance + CoinBalance1 * dataProvider.Coin12CoinKline.Close + CoinBalance2 * dataProvider.Coin22CoinKline.Close;
+        /// <summary>
+        /// 餘額
+        /// </summary>
+        public decimal Balance { get { return balances[coinNames[0]].Total; } }
+        /// <summary>
+        /// Coin1 的餘額
+        /// </summary>
+        public decimal CoinBalance1 { get { return balances[coinNames[1]].Total; } }
+        /// <summary>
+        /// Coin2 的餘額
+        /// </summary>
+        public decimal CoinBalance2 { get { return balances[coinNames[2]].Total; } }
+
+        public BinanceSpot(string baseCoin, string coin1, string coin2)
+            => (socketClient, continuousResetEvent, coinNames, symbols, dataProvider) = (new(), new(45, 1000), new[] { baseCoin, coin1, coin2 }, new[] { $"{coin1}{baseCoin}", $"{coin2}{baseCoin}", $"{coin2}{coin1}" }, new());
 
         public void Run()
         {
@@ -51,18 +71,41 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             return new ThreeMarketsDataProviderModel(dataProvider);
         }
 
-        public async Task TradingAsync(TradingAction action, TradingMarket market)
+        public void Trading(TradingAction action, TradingMarket market)
         {
             Task cancelOrder1 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[0]);
             Task cancelOrder2 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[1]);
             Task cancelOrder3 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[2]);
-            await Task.WhenAll(cancelOrder1, cancelOrder2, cancelOrder3);
-            await client.Spot.Order.PlaceOrderAsync(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market);
+            Task.WaitAll(cancelOrder1, cancelOrder2, cancelOrder3);
+            client.Spot.Order.PlaceOrder(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market);
+        }
+
+        /// <summary>
+        /// 紀錄資料
+        /// </summary>
+        /// <param name="record"></param>
+        public void Recording(Models.Records.IEnvironmentModels record)
+        {
+            IEnvironmentModels spotRecord = record as IEnvironmentModels;
+            spotRecord.Assets = Assets;
+            spotRecord.Balance = Balance;
+            spotRecord.CoinBalance1 = CoinBalance1;
+            spotRecord.CoinBalance2 = CoinBalance2;
+            spotRecord.Date = dataProvider.Coin12CoinKline.Date;
+            spotRecord.Coin12CoinClose = dataProvider.Coin12CoinKline.Close;
+            spotRecord.Coin22CoinClose = dataProvider.Coin22CoinKline.Close;
+            spotRecord.Coin22Coin1Close = dataProvider.Coin22Coin1Kline.Close;
+        }
+
+        public async Task<bool> ReflashAcountInfo()
+        {
+            WebCallResult<BinanceAccountInfo> result = await client.General.GetAccountInfoAsync();
+            balances = result.Data.Balances.ToDictionary(item => item.Asset);
+            return result.Success;
         }
 
         public async Task CloseAsync()
             => await socketClient.UnsubscribeAll();
-
 
         private static KlineModel ToKlineModel(IBinanceStreamKline data)
             => new() { Open = data.Open, Close = data.Close, Date = data.CloseTime, High = data.High, Low = data.Low, Money = data.QuoteVolume, Volume = data.BaseVolume, TakerBuyBaseVolume = data.TakerBuyBaseVolume, TakerBuyQuoteVolume = data.TakerBuyQuoteVolume, TradeCount = data.TradeCount };
