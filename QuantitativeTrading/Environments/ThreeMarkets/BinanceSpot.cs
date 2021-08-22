@@ -72,13 +72,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         }
 
         public void Trading(TradingAction action, TradingMarket market)
-        {
-            Task cancelOrder1 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[0]);
-            Task cancelOrder2 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[1]);
-            Task cancelOrder3 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[2]);
-            Task.WaitAll(cancelOrder1, cancelOrder2, cancelOrder3);
-            client.Spot.Order.PlaceOrder(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market);
-        }
+            => client.Spot.Order.PlaceOrder(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market);
 
         /// <summary>
         /// 紀錄資料
@@ -99,6 +93,10 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
 
         public async Task<bool> ReflashAcountInfo()
         {
+            Task cancelOrder1 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[0]);
+            Task cancelOrder2 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[1]);
+            Task cancelOrder3 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[2]);
+            Task.WaitAll(cancelOrder1, cancelOrder2, cancelOrder3);
             WebCallResult<BinanceAccountInfo> result = await client.General.GetAccountInfoAsync();
             balances = result.Data.Balances.ToDictionary(item => item.Asset);
             return result.Success;

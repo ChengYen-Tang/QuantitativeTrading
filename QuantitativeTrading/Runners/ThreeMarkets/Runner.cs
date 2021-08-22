@@ -19,7 +19,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         where U : class, IEnvironmentModels, IStrategyModels, new()
     {
         protected readonly Recorder<U> recorder;
-        protected readonly SpotEnvironment environment;
+        protected readonly IThreeMarketEnvironment environment;
         protected readonly T strategy;
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <param name="strategy"> 策略 </param>
         /// <param name="environment"> 回測環境 </param>
         /// <param name="recorder"> 交易紀錄器 </param>
-        public Runner(T strategy, SpotEnvironment environment, Recorder<U> recorder)
+        public Runner(T strategy, IThreeMarketEnvironment environment, Recorder<U> recorder)
             => (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
 
         /// <summary>
@@ -37,9 +37,10 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <returns></returns>
         public virtual async Task RunAsync()
         {
-            while (!environment.IsGameOver)
+            SpotEnvironment spotEnvironment = environment as SpotEnvironment;
+            while (!spotEnvironment.IsGameOver)
             {
-                ThreeMarketsDataProviderModel data = environment.CurrentKline;
+                ThreeMarketsDataProviderModel data = spotEnvironment.CurrentKline;
                 StrategyAction action = strategy.PolicyDecision(data);
                 Trading(action);
                 if (recorder is not null)
@@ -49,7 +50,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                     strategy.Recording(record);
                     recorder.Insert(record);
                 }
-                environment.MoveNextTime(out _);
+                spotEnvironment.MoveNextTime(out _);
             }
 
             if (recorder is not null)
