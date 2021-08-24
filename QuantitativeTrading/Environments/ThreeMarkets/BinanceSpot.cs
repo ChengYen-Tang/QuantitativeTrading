@@ -1,8 +1,10 @@
 ﻿using Binance.Net;
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
+using Binance.Net.Objects.Spot;
 using Binance.Net.Objects.Spot.SpotData;
 using CryptoExchange.Net.Objects;
+using Microsoft.Extensions.Configuration;
 using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records.ThreeMarkets;
 using System;
@@ -38,8 +40,13 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// </summary>
         public decimal CoinBalance2 { get { return balances[coinNames[2]].Total; } }
 
-        public BinanceSpot(string baseCoin, string coin1, string coin2)
-            => (socketClient, continuousResetEvent, coinNames, symbols, dataProvider) = (new(), new(45, 1000), new[] { baseCoin, coin1, coin2 }, new[] { $"{coin1}{baseCoin}", $"{coin2}{baseCoin}", $"{coin2}{coin1}" }, new());
+        public BinanceSpot(IConfiguration configuration, string baseCoin, string coin1, string coin2)
+        {
+            (socketClient, continuousResetEvent, coinNames, symbols, dataProvider) = (new(), new(45, 1000), new[] { baseCoin, coin1, coin2 }, new[] { $"{coin1}{baseCoin}", $"{coin2}{baseCoin}", $"{coin2}{coin1}" }, new());
+            string key = configuration["Key"];
+            string secret = configuration["Secret"];
+            client = new(new BinanceClientOptions() { ApiCredentials = new(key, secret) });
+        }
 
         public void Run()
         {
