@@ -1,6 +1,8 @@
-﻿using QuantitativeTrading.Environments.ThreeMarkets;
+﻿using Microsoft.Extensions.Logging;
+using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records;
+using QuantitativeTrading.Models.Records.ThreeMarkets;
 using QuantitativeTrading.Strategies.ThreeMarkets;
 using System;
 using System.Threading;
@@ -13,6 +15,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         where T : Strategy
         where U : class, IEnvironmentModels, IStrategyModels, new()
     {
+        private readonly ILogger logger;
         private readonly BinanceSpot env;
         private readonly CancellationTokenSource cancellationTokenSource;
         private bool isRun;
@@ -25,9 +28,9 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <param name="strategy"> 策略 </param>
         /// <param name="environment"> 回測環境 </param>
         /// <param name="recorder"> 交易紀錄器 </param>
-        public BinanceRunner(T strategy, BinanceSpot environment, Recorder<U> recorder)
+        public BinanceRunner(ILogger logger, T strategy, BinanceSpot environment, Recorder<U> recorder)
             : base(strategy, environment, recorder)
-            => (env, isRun, cancellationTokenSource) = (environment, false, new());
+            => (this.logger, env, isRun, cancellationTokenSource) = (logger, environment, false, new());
 
         public override Task RunAsync()
         {
@@ -55,6 +58,8 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                     strategy.Recording(record);
                     recorder.Insert(record);
                     await recorder.SaveAsync();
+                    ICloseChangeModels closeChangeSumRecord = record as ICloseChangeModels;
+                    logger.LogInformation($"Time: {DateTime.Now}, Assets: {record.Assets}, Action: {action}, Coin1Change: {closeChangeSumRecord.Coin1ToCoinChangeSum}, Coin2Change: {closeChangeSumRecord.Coin2ToCoinChangeSum}");
                 }
             }
         }

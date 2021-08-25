@@ -29,7 +29,7 @@ namespace QuantitativeTrading.Services.ThreeMarkets
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             Recorder<CloseChangeRecordModel> recorder = new("Binance", path);
-            runner = new(closeChange, binanceSpot, recorder);
+            runner = new(logger, closeChange, binanceSpot, recorder);
             await runner.RunAsync();
             logger.LogInformation("Service is start.");
         }

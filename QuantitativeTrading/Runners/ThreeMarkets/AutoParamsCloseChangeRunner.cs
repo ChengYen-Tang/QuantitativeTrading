@@ -31,16 +31,16 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         public override async Task RunAsync()
         {
             EnvironmentParams environmentParams = new(20000, 10000, 0.1m, 3);
-
-            while (!environment.IsGameOver)
+            SpotEnvironment spotEnvironment = environment as SpotEnvironment;
+            while (!spotEnvironment.IsGameOver)
             {
-                if (environment.CurrentKline.Coin12CoinKline.Date.Day == 1 && environment.CurrentKline.Coin12CoinKline.Date.Hour == 0 && environment.CurrentKline.Coin12CoinKline.Date.Minute == 0)
+                if (spotEnvironment.CurrentKline.Coin12CoinKline.Date.Day == 1 && spotEnvironment.CurrentKline.Coin12CoinKline.Date.Hour == 0 && spotEnvironment.CurrentKline.Coin12CoinKline.Date.Minute == 0)
                 {
-                    (int observationTime, int tradingInterval) = RunAllParams.RunFindAutoParamsCloseChangeBestParams(environment.CloneCurrentDataProvider(), environmentParams);
+                    (int observationTime, int tradingInterval) = RunAllParams.RunFindAutoParamsCloseChangeBestParams(spotEnvironment.CloneCurrentDataProvider(), environmentParams);
                     strategy.UpdateParams(observationTime, tradingInterval);
                 }
 
-                ThreeMarketsDataProviderModel data = environment.CurrentKline;
+                ThreeMarketsDataProviderModel data = spotEnvironment.CurrentKline;
                 StrategyAction action = strategy.PolicyDecision(data);
                 Trading(action);
                 if (recorder is not null)
@@ -51,8 +51,8 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                     recorder.Insert(record);
                 }
 
-                Console.WriteLine($"Date: {environment.CurrentKline.Coin12CoinKline.Date}, Asset: {environment.Assets}, 觀察: {strategy.ObservationTime}, 交易間隔: {strategy.TradingInterval}");
-                environment.MoveNextTime(out _);
+                Console.WriteLine($"Date: {spotEnvironment.CurrentKline.Coin12CoinKline.Date}, Asset: {environment.Assets}, 觀察: {strategy.ObservationTime}, 交易間隔: {strategy.TradingInterval}");
+                spotEnvironment.MoveNextTime(out _);
             }
 
             if (recorder is not null)
