@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Environments.ThreeMarkets;
 using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records;
@@ -45,6 +46,9 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         private async Task Worker()
         {
             CancellationToken cancellationToken= cancellationTokenSource.Token;
+            ThreeMarketsDataProvider provider = await env.GetPreviousDataAsync();
+            foreach (ThreeMarketsDataProviderModel data in provider)
+                strategy.PolicyDecision(data);
             while (!cancellationToken.IsCancellationRequested)
             {
                 ThreeMarketsDataProviderModel data = await env.GetKlineAsync();

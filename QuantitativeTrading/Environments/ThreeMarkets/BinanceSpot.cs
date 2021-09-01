@@ -1,10 +1,12 @@
 ﻿using Binance.Net;
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
+using Binance.Net.Interfaces.SubClients;
 using Binance.Net.Objects.Spot;
 using Binance.Net.Objects.Spot.SpotData;
 using CryptoExchange.Net.Objects;
 using Microsoft.Extensions.Configuration;
+using QuantitativeTrading.Data.DataProviders;
 using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records.ThreeMarkets;
 using System;
@@ -19,6 +21,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         private readonly BinanceClient client;
         private readonly BinanceSocketClient socketClient;
         private readonly ContinuousResetEvent continuousResetEvent;
+        private readonly int tradingInterval;
         private readonly string[] coinNames;
         private readonly string[] symbols;
         private readonly ThreeMarketsDataProviderModel dataProvider;
@@ -40,12 +43,12 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// </summary>
         public decimal CoinBalance2 { get { return balances[coinNames[2]].Total; } }
 
-        public BinanceSpot(IConfiguration configuration, string baseCoin, string coin1, string coin2)
+        public BinanceSpot(IConfiguration configuration, string baseCoin, string coin1, string coin2, int tradingInterval)
         {
-            (socketClient, continuousResetEvent, coinNames, symbols, dataProvider) = (new(), new(45, 1000), new[] { baseCoin, coin1, coin2 }, new[] { $"{coin1}{baseCoin}", $"{coin2}{baseCoin}", $"{coin2}{coin1}" }, new());
-            string key = configuration["Key"];
-            string secret = configuration["Secret"];
-            client = new(new BinanceClientOptions() { ApiCredentials = new(key, secret) });
+            (socketClient, continuousResetEvent, coinNames, symbols, dataProvider, this.tradingInterval) = (new(), new(45, 1000), new[] { baseCoin, coin1, coin2 }, new[] { $"{coin1}{baseCoin}", $"{coin2}{baseCoin}", $"{coin2}{coin1}" }, new(), tradingInterval);
+            string key = configuration.GetValue<string>("Key");
+            string secret = configuration.GetValue<string>("Secret");
+            client = (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(secret)) ? new(new BinanceClientOptions() { ApiCredentials = new(key, secret) }) : new();
         }
 
         public void Run()
@@ -98,6 +101,9 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             spotRecord.Coin22Coin1Close = dataProvider.Coin22Coin1Kline.Close;
         }
 
+        public async Task<ThreeMarketsDataProvider> GetPreviousDataAsync()
+            => new(new ThreeMarketsDatasetModel() { Coin12CoinKlines = await GetKlinesAsync(symbols[0]), Coin22CoinKlines = await GetKlinesAsync(symbols[1]), Coin22Coin1Klines = await GetKlinesAsync(symbols[2]) });
+
         public async Task<bool> ReflashAcountInfo()
         {
             Task cancelOrder1 = client.Spot.Order.CancelAllOpenOrdersAsync(symbols[0]);
@@ -125,6 +131,48 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
 
         private static OrderSide ActionToOrderSide(TradingAction action)
             =>  action == TradingAction.Buy ? OrderSide.Buy : OrderSide.Sell;
+
+        private async Task<KlineModel[]> GetKlinesAsync(string symbol)
+        {
+            List<KlineModel> kLines = new();
+            IBinanceClientMarket market = client.Spot.Market;
+            DateTime startTime = DateTime.UtcNow.AddMinutes(-(tradingInterval - 4));
+
+            while (startTime < DateTime.UtcNow)
+            {
+                DateTime endTime = startTime.AddHours(12);
+
+                try
+                {
+                    var klines = await market.GetKlinesAsync(symbol, KlineInterval.OneMinute, startTime, endTime, 1000);
+                    if (klines != null && klines.Success)
+                    {
+                        kLines.AddRange(klines.Data.OrderBy(item => item.CloseTime).Select(item =>
+                            new KlineModel
+                            {
+                                Volume = item.BaseVolume,
+                                Close = item.Close,
+                                Date = item.CloseTime,
+                                High = item.High,
+                                Low = item.Low,
+                                Open = item.Open,
+                                Money = item.QuoteVolume,
+                                TakerBuyBaseVolume = item.TakerBuyBaseVolume,
+                                TakerBuyQuoteVolume = item.TakerBuyQuoteVolume,
+                                TradeCount = item.TradeCount
+                            }));
+                    }
+                }
+                catch { }
+
+                await Task.Delay(3000);
+
+                startTime = endTime;
+            }
+            KlineModel[] results = new KlineModel[kLines.Count - 1];
+            Array.Copy(kLines.OrderBy(item => item.Date).ToArray(), results, results.Length);
+            return results;
+        }
 
         protected virtual void Dispose(bool disposing)
         {

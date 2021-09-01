@@ -24,7 +24,7 @@ namespace QuantitativeTrading.Services.ThreeMarkets
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             CloseChange closeChange = new(12 * 60, 12 * 60);
-            BinanceSpot binanceSpot = new(configuration, "USDT", "BTC", "ETH");
+            BinanceSpot binanceSpot = new(configuration, "USDT", "BTC", "ETH", 12 * 60);
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Binance");
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
