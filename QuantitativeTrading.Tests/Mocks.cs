@@ -46,11 +46,8 @@ namespace QuantitativeTrading.Tests
             : base(null, default, default, default, default)
             => Actions = new();
 
-        public override (decimal balance, decimal CoinBalance1, decimal CoinBalance2) Trading(TradingAction action, TradingMarket market)
-        {
-            Actions.Add((action, market));
-            return (default, default, default);
-        }
+        public override void Trading(TradingAction action, TradingMarket market)
+            => Actions.Add((action, market));
 
         public void SetBalance(decimal balance)
             => Balance = balance;
