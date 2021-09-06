@@ -13,15 +13,23 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// <summary>
         /// 資產
         /// </summary>
-        public override decimal Assets => Balance + CoinBalance1 * CurrentKline.Coin12CoinKline.Close + CoinBalance2 * CurrentKline.Coin22CoinKline.Close;
+        public override decimal Assets => Balance + Coin1Asset + Coin2Asset;
         /// <summary>
         /// Coin1 的餘額
         /// </summary>
-        public decimal CoinBalance1 { get; protected set; }
+        public decimal Coin1Balance { get; protected set; }
         /// <summary>
         /// Coin2 的餘額
         /// </summary>
-        public decimal CoinBalance2 { get; protected set; }
+        public decimal Coin2Balance { get; protected set; }
+        /// <summary>
+        /// Coin1 的資產
+        /// </summary>
+        public decimal Coin1Asset { get => Coin1Balance * CurrentKline.Coin12CoinKline.Close; }
+        /// <summary>
+        /// Coin2 的資產
+        /// </summary>
+        public decimal Coin2Asset { get => Coin2Balance * Coin2Balance * CurrentKline.Coin22CoinKline.Close; }
 
         /// <summary>
         /// 初始化
@@ -51,11 +59,11 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         public virtual void Trading(TradingAction action, TradingMarket market)
         {
             if (market == TradingMarket.Coin12Coin)
-                (Balance, CoinBalance1) = TradingAction(action, dataProvider.Current.Coin12CoinKline.Close, Balance, CoinBalance1);
+                (Balance, Coin1Balance) = TradingAction(action, dataProvider.Current.Coin12CoinKline.Close, Balance, Coin1Balance);
             if (market == TradingMarket.Coin22Coin)
-                (Balance, CoinBalance2) = TradingAction(action, dataProvider.Current.Coin22CoinKline.Close, Balance, CoinBalance2);
+                (Balance, Coin2Balance) = TradingAction(action, dataProvider.Current.Coin22CoinKline.Close, Balance, Coin2Balance);
             if (market == TradingMarket.Coin22Coin1)
-                (CoinBalance1, CoinBalance2) = TradingAction(action, dataProvider.Current.Coin22Coin1Kline.Close, CoinBalance1, CoinBalance2);
+                (Coin1Balance, Coin2Balance) = TradingAction(action, dataProvider.Current.Coin22Coin1Kline.Close, Coin1Balance, Coin2Balance);
         }
 
         /// <summary>
@@ -67,8 +75,10 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             IEnvironmentModels spotRecord = record as IEnvironmentModels;
             spotRecord.Assets = Assets;
             spotRecord.Balance = Balance;
-            spotRecord.CoinBalance1 = CoinBalance1;
-            spotRecord.CoinBalance2 = CoinBalance2;
+            spotRecord.Coin1Balance = Coin1Balance;
+            spotRecord.Coin2Balance = Coin2Balance;
+            spotRecord.Coin1Asset = Coin1Asset;
+            spotRecord.Coin2Asset = Coin2Asset;
             spotRecord.Date = CurrentKline.Coin12CoinKline.Date;
             spotRecord.Coin12CoinClose = CurrentKline.Coin12CoinKline.Close;
             spotRecord.Coin22CoinClose = CurrentKline.Coin22CoinKline.Close;

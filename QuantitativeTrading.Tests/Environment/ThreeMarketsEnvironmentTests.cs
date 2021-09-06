@@ -38,8 +38,8 @@ namespace QuantitativeTrading.Tests.Environment
             env.Trading(TradingAction.Sell, TradingMarket.Coin22Coin);
             Assert.IsTrue(env.Assets < 100 && env.Assets > 90);
             Assert.IsTrue(env.Balance < 100 && env.Balance > 90);
-            Assert.IsTrue(env.CoinBalance1 < 1 && env.CoinBalance1 >= 0);
-            Assert.IsTrue(env.CoinBalance2 < 1 && env.CoinBalance2 >= 0);
+            Assert.IsTrue(env.Coin1Balance < 1 && env.Coin1Balance >= 0);
+            Assert.IsTrue(env.Coin2Balance < 1 && env.Coin2Balance >= 0);
         }
 
         [TestMethod]
@@ -50,8 +50,8 @@ namespace QuantitativeTrading.Tests.Environment
             env.Trading(TradingAction.Sell, TradingMarket.Coin12Coin);
             Assert.IsTrue(env.Assets < 110 && env.Assets > 90);
             Assert.IsTrue(env.Balance < 110 && env.Balance > 90);
-            Assert.IsTrue(env.CoinBalance1 < 1 && env.CoinBalance1 >= 0);
-            Assert.IsTrue(env.CoinBalance2 < 1 && env.CoinBalance2 >= 0);
+            Assert.IsTrue(env.Coin1Balance < 1 && env.Coin1Balance >= 0);
+            Assert.IsTrue(env.Coin2Balance < 1 && env.Coin2Balance >= 0);
         }
 
         [TestMethod]
@@ -60,8 +60,8 @@ namespace QuantitativeTrading.Tests.Environment
             env.Trading(TradingAction.Sell, TradingMarket.Coin22Coin);
             Assert.AreEqual(100, env.Assets);
             Assert.AreEqual(100, env.Balance);
-            Assert.AreEqual(0, env.CoinBalance1);
-            Assert.AreEqual(0, env.CoinBalance2);
+            Assert.AreEqual(0, env.Coin1Balance);
+            Assert.AreEqual(0, env.Coin2Balance);
         }
 
         [TestMethod]
@@ -70,8 +70,8 @@ namespace QuantitativeTrading.Tests.Environment
             env.Trading(TradingAction.Buy, TradingMarket.Coin22Coin1);
             Assert.AreEqual(100, env.Assets);
             Assert.AreEqual(100, env.Balance);
-            Assert.AreEqual(0, env.CoinBalance1);
-            Assert.AreEqual(0, env.CoinBalance2);
+            Assert.AreEqual(0, env.Coin1Balance);
+            Assert.AreEqual(0, env.Coin2Balance);
         }
 
         [TestMethod]

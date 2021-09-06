@@ -10,7 +10,9 @@ namespace QuantitativeTrading.Models.Records.ThreeMarkets
         public decimal Coin22Coin1Close { get; set; }
         public decimal Assets { get; set; }
         public decimal Balance { get; set; }
-        public decimal CoinBalance1 { get; set; }
-        public decimal CoinBalance2 { get; set; }
+        public decimal Coin1Balance { get; set; }
+        public decimal Coin2Balance { get; set; }
+        public decimal Coin1Asset { get; set; }
+        public decimal Coin2Asset { get; set; }
     }
 }

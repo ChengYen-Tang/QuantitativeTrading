@@ -140,7 +140,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             else
                 runner = new(strategy, env, null);
             await runner.RunAsync();
-            return new() { Combination = combination, Assets = env.Assets, Balance = env.Balance, CoinBalance1 = env.CoinBalance1, CoinBalance2 = env.CoinBalance2, EndDate = env.CurrentKline.Coin22Coin1Kline.Date, ObservationTime = strategy.ObservationTime, TradingInterval = strategy.TradingInterval };
+            return new() { Combination = combination, Assets = env.Assets, Balance = env.Balance, CoinBalance1 = env.Coin1Balance, CoinBalance2 = env.Coin2Balance, EndDate = env.CurrentKline.Coin22Coin1Kline.Date, ObservationTime = strategy.ObservationTime, TradingInterval = strategy.TradingInterval };
         }
     }
 }

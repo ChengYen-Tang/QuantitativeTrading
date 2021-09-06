@@ -53,9 +53,9 @@ namespace QuantitativeTrading.Tests
             => Balance = balance;
 
         public void SetCoinBalance1(decimal balance)
-            => CoinBalance1 = balance;
+            => Coin1Balance = balance;
 
         public void SetCoinBalance2(decimal balance)
-            => CoinBalance2 = balance;
+            => Coin2Balance = balance;
     }
 }

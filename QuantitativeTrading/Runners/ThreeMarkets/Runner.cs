@@ -69,16 +69,16 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         {
             if (action == StrategyAction.Coin)
             {
-                if (environment.CoinBalance1 > environment.Balance && environment.CoinBalance1 > environment.CoinBalance2)
+                if (environment.Coin1Asset > environment.Balance && environment.Coin1Asset > environment.Coin2Asset)
                     environment.Trading(TradingAction.Sell, TradingMarket.Coin12Coin);
-                else if (environment.CoinBalance2 > environment.Balance && environment.CoinBalance2 > environment.CoinBalance1)
+                else if (environment.Coin2Asset > environment.Balance && environment.Coin2Asset > environment.Coin1Asset)
                     environment.Trading(TradingAction.Sell, TradingMarket.Coin22Coin);
             }
             else if (action == StrategyAction.Coin1)
             {
-                if (environment.Balance > environment.CoinBalance1 && environment.Balance > environment.CoinBalance2)
+                if (environment.Balance > environment.Coin1Asset && environment.Balance > environment.Coin2Asset)
                     environment.Trading(TradingAction.Buy, TradingMarket.Coin12Coin);
-                else if (environment.CoinBalance2 > environment.CoinBalance1 && environment.Balance < environment.CoinBalance2)
+                else if (environment.Coin2Asset > environment.Coin1Asset && environment.Balance < environment.Coin2Asset)
                 {
                     if (strategy.BestCoin1ToCoin2Path(action) == BestPath.Path1)
                         TwoStepTrading(TradingMarket.Coin22Coin, TradingMarket.Coin12Coin);
@@ -88,9 +88,9 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             }
             else if (action == StrategyAction.Coin2)
             {
-                if (environment.Balance > environment.CoinBalance1 && environment.Balance > environment.CoinBalance2)
+                if (environment.Balance > environment.Coin1Asset && environment.Balance > environment.Coin2Asset)
                     environment.Trading(TradingAction.Buy, TradingMarket.Coin22Coin);
-                else if (environment.CoinBalance2 < environment.CoinBalance1 && environment.Balance < environment.CoinBalance1)
+                else if (environment.Coin2Asset < environment.Coin1Asset && environment.Balance < environment.Coin1Asset)
                 {
                     if (strategy.BestCoin1ToCoin2Path(action) == BestPath.Path1)
                         TwoStepTrading(TradingMarket.Coin12Coin, TradingMarket.Coin22Coin);

@@ -29,7 +29,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         private bool disposedValue;
         private Dictionary<string, BinanceBalance> balances;
 
-        public decimal Assets => Balance + CoinBalance1 * dataProvider.Coin12CoinKline.Close + CoinBalance2 * dataProvider.Coin22CoinKline.Close;
+        public decimal Assets => Balance + Coin1Asset + Coin2Asset;
         /// <summary>
         /// 餘額
         /// </summary>
@@ -37,11 +37,19 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// <summary>
         /// Coin1 的餘額
         /// </summary>
-        public decimal CoinBalance1 { get { return balances[coinNames[1]].Total; } }
+        public decimal Coin1Balance { get { return balances[coinNames[1]].Total; } }
         /// <summary>
         /// Coin2 的餘額
         /// </summary>
-        public decimal CoinBalance2 { get { return balances[coinNames[2]].Total; } }
+        public decimal Coin2Balance { get { return balances[coinNames[2]].Total; } }
+        /// <summary>
+        /// Coin1 的資產
+        /// </summary>
+        public decimal Coin1Asset { get => Coin1Balance * dataProvider.Coin12CoinKline.Close; }
+        /// <summary>
+        /// Coin2 的資產
+        /// </summary>
+        public decimal Coin2Asset { get => Coin2Balance * dataProvider.Coin22CoinKline.Close; }
 
         public BinanceSpot(IConfiguration configuration, string baseCoin, string coin1, string coin2, int tradingInterval)
         {
@@ -93,8 +101,10 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             IEnvironmentModels spotRecord = record as IEnvironmentModels;
             spotRecord.Assets = Assets;
             spotRecord.Balance = Balance;
-            spotRecord.CoinBalance1 = CoinBalance1;
-            spotRecord.CoinBalance2 = CoinBalance2;
+            spotRecord.Coin1Balance = Coin1Balance;
+            spotRecord.Coin2Balance = Coin2Balance;
+            spotRecord.Coin1Asset = Coin1Asset;
+            spotRecord.Coin2Asset = Coin2Asset;
             spotRecord.Date = dataProvider.Coin12CoinKline.Date;
             spotRecord.Coin12CoinClose = dataProvider.Coin12CoinKline.Close;
             spotRecord.Coin22CoinClose = dataProvider.Coin22CoinKline.Close;

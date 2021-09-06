@@ -52,9 +52,12 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             while (!cancellationToken.IsCancellationRequested)
             {
                 ThreeMarketsDataProviderModel data = await env.GetKlineAsync();
+                logger.LogDebug("放行");
                 StrategyAction action = strategy.PolicyDecision(data);
-                await env.ReflashAcountInfo();
-                Trading(action);
+                logger.LogDebug("得到 Action");
+                if (await env.ReflashAcountInfo())
+                    Trading(action);
+                logger.LogDebug("交易");
                 if (recorder is not null)
                 {
                     U record = new();
