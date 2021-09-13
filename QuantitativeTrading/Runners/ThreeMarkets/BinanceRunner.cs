@@ -33,14 +33,13 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             : base(strategy, environment, recorder)
             => (this.logger, env, isRun, cancellationTokenSource) = (logger, environment, false, new());
 
-        public override Task RunAsync()
+        public override async Task RunAsync()
         {
             if (isRun)
-                return Task.CompletedTask;
-            env.Run();
+                return;
+            await env.RunAsync();
             runTask = Task.Factory.StartNew(Worker, TaskCreationOptions.LongRunning);
             isRun = true;
-            return Task.CompletedTask;
         }
 
         private async Task Worker()

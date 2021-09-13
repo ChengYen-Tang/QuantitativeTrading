@@ -2,7 +2,7 @@
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
 using Binance.Net.Interfaces.SubClients;
-using Binance.Net.Objects.Spot;
+using Binance.Net.Objects;
 using Binance.Net.Objects.Spot.SpotData;
 using CryptoExchange.Net.Objects;
 using Microsoft.Extensions.Configuration;
@@ -59,23 +59,23 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
             client = (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(secret)) ? new(new BinanceClientOptions() { ApiCredentials = new(key, secret) }) : new();
         }
 
-        public void Run()
+        public async Task RunAsync()
         {
             foreach (var item in symbols.Select((value, index) => new { value, index }))
-                socketClient.Spot.SubscribeToKlineUpdates(item.value, KlineInterval.OneMinute, (data) =>
+                await socketClient.Spot.SubscribeToKlineUpdatesAsync(item.value, KlineInterval.OneMinute, (data) =>
                 {
-                    if (data != null && data.Data.Final)
+                    if (data != null && data.Data.Data.Final)
                     {
                         switch (item.index)
                         {
                             case 1:
-                                dataProvider.Coin22CoinKline = ToKlineModel(data.Data);
+                                dataProvider.Coin22CoinKline = ToKlineModel(data.Data.Data);
                                 break;
                             case 2:
-                                dataProvider.Coin22Coin1Kline = ToKlineModel(data.Data);
+                                dataProvider.Coin22Coin1Kline = ToKlineModel(data.Data.Data);
                                 break;
                             default:
-                                dataProvider.Coin12CoinKline = ToKlineModel(data.Data);
+                                dataProvider.Coin12CoinKline = ToKlineModel(data.Data.Data);
                                 break;
                         }
                         continuousResetEvent.Set();
@@ -90,7 +90,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         }
 
         public void Trading(TradingAction action, TradingMarket market)
-            => client.Spot.Order.PlaceOrder(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market);
+            => client.Spot.Order.PlaceOrderAsync(MarketToSymbol(market), ActionToOrderSide(action), OrderType.Market).Wait();
 
         /// <summary>
         /// 紀錄資料
@@ -126,7 +126,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         }
 
         public async Task CloseAsync()
-            => await socketClient.UnsubscribeAll();
+            => await socketClient.UnsubscribeAllAsync();
 
         private static KlineModel ToKlineModel(IBinanceStreamKline data)
             => new() { Open = data.Open, Close = data.Close, Date = data.CloseTime, High = data.High, Low = data.Low, Money = data.QuoteVolume, Volume = data.BaseVolume, TakerBuyBaseVolume = data.TakerBuyBaseVolume, TakerBuyQuoteVolume = data.TakerBuyQuoteVolume, TradeCount = data.TradeCount };
