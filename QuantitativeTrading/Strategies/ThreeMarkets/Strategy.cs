@@ -18,11 +18,11 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         /// <summary>
         /// 貨幣1 價格漲跌幅%
         /// </summary>
-        protected decimal Coin1ToCoinChange => buffer.Count > 1 ? (buffer.Last.Coin12CoinKline.Close - buffer.First.Coin12CoinKline.Close) / buffer.First.Coin12CoinKline.Close : 0;
+        protected decimal Coin1ToCoinChange;
         /// <summary>
         /// 貨幣2 價格漲跌幅%
         /// </summary>
-        protected decimal Coin2ToCoinChange => buffer.Count > 1 ? (buffer.Last.Coin22CoinKline.Close - buffer.First.Coin22CoinKline.Close) / buffer.First.Coin22CoinKline.Close : 0;
+        protected decimal Coin2ToCoinChange;
 
         /// <summary>
         /// 初始化
@@ -81,6 +81,12 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
 
             step++;
             return false;
+        }
+
+        protected virtual void ComputeParameter()
+        {
+            Coin1ToCoinChange = buffer.Count > 1 ? (buffer.Last.Coin12CoinKline.Close - buffer.First.Coin12CoinKline.Close) / buffer.First.Coin12CoinKline.Close : 0;
+            Coin2ToCoinChange = buffer.Count > 1 ? (buffer.Last.Coin22CoinKline.Close - buffer.First.Coin22CoinKline.Close) / buffer.First.Coin22CoinKline.Close : 0;
         }
     }
 

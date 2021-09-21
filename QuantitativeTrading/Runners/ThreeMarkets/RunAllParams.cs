@@ -55,6 +55,38 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
             await new CsvExporter().Export(Path.Combine(savePath, "CombinationResult.csv"), resultsArray);
         }
 
+        /// <summary>
+        /// 運行 AutoSellCloseChange 策略的參數
+        /// </summary>
+        /// <param name="dataProvider"> 回測資料 </param>
+        /// <param name="environmentParams"> 回測環境的參數 </param>
+        /// <param name="observationTimes"> 使用歷史多久的時間觀察 </param>
+        /// <param name="tradingIntervals"> 交易頻率(多久交易一次) </param>
+        /// <param name="savePath"> 存檔位置 </param>
+        /// <returns></returns>
+        public static async Task RunAutoSellCloseChangeAllParams(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams, int[] observationTimes, int[] tradingIntervals, decimal[] sellConditions, string savePath)
+        {
+            List<(int observationTime, int tradingInterval, decimal sellCondition)> combinations = new();
+            ConcurrentBag<ThreeMarketsCombinationModels> results = new();
+            foreach (int observationTime in observationTimes)
+                foreach (int tradingInterval in tradingIntervals)
+                    foreach (decimal sellCondition in sellConditions)
+                        combinations.Add((observationTime, tradingInterval, sellCondition));
+
+            Parallel.ForEach(combinations, new ParallelOptions { MaxDegreeOfParallelism = 5 }, (combination) =>
+            {
+                AutoSellCloseChange strategy = new(combination.observationTime, combination.tradingInterval, combination.sellCondition);
+                string combinationName = $"{Utils.MinuteToHrOrDay(combination.observationTime)}-{Utils.MinuteToHrOrDay(combination.tradingInterval)}-{combination.sellCondition}";
+                ThreeMarketsCombinationModels result = RunAllDatasetParams<AutoSellCloseChangeRecordModel>(dataProvider, strategy, environmentParams, combinationName, savePath).Result;
+                results.Add(result);
+                counter++;
+                Console.WriteLine(counter);
+            });
+
+            var resultsArray = results.ToArray();
+            await new CsvExporter().Export(Path.Combine(savePath, "CombinationResult.csv"), resultsArray);
+        }
+
         public static (int observationTime, int tradingInterval) RunFindAutoParamsCloseChangeBestParams(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams)
         {
             int[] observationTimes = new int[] { 3, 5, 15, 30, 60, 120, 240, 360, 480, 720, 1440, 4320, 10080, 20160, 30240, 40320 };
@@ -130,11 +162,51 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <param name="combination"> 回測紀錄名稱 </param>
         /// <param name="savePath"> 存檔位置 </param>
         /// <returns></returns>
+        private static Task<ThreeMarketsCombinationModels> RunAllDatasetParams<V>(ThreeMarketsDataProvider dataProvider, AutoSellCloseChange strategy, EnvironmentParams environmentParams, string combination, string savePath)
+            where V : class, IEnvironmentModels, IStrategyModels, new()
+        {
+            ThreeMarketsDataProvider newDataProvider = dataProvider.Clone();
+            return RunParams<V>(newDataProvider, strategy, environmentParams, combination, savePath);
+        }
+
+        /// <summary>
+        /// 開始回測
+        /// </summary>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="dataProvider"> 回測資料 </param>
+        /// <param name="strategy"> 策略 </param>
+        /// <param name="environmentParams"> 回測環境的參數 </param>
+        /// <param name="combination"> 回測紀錄名稱 </param>
+        /// <param name="savePath"> 存檔位置 </param>
+        /// <returns></returns>
         private static async Task<ThreeMarketsCombinationModels> RunParams<V>(ThreeMarketsDataProvider dataProvider, Strategy strategy, EnvironmentParams environmentParams, string combination, string savePath)
             where V : class, IEnvironmentModels, IStrategyModels, new()
         {
             SpotEnvironment env = new(dataProvider, environmentParams);
             Runner<Strategy, V> runner;
+            if (combination != string.Empty || savePath != string.Empty)
+                runner = new(strategy, env, new(combination, savePath));
+            else
+                runner = new(strategy, env, null);
+            await runner.RunAsync();
+            return new() { Combination = combination, Assets = env.Assets, Balance = env.Balance, CoinBalance1 = env.Coin1Balance, CoinBalance2 = env.Coin2Balance, EndDate = env.CurrentKline.Coin22Coin1Kline.Date, ObservationTime = strategy.ObservationTime, TradingInterval = strategy.TradingInterval };
+        }
+
+        /// <summary>
+        /// 開始回測
+        /// </summary>
+        /// <typeparam name="V"></typeparam>
+        /// <param name="dataProvider"> 回測資料 </param>
+        /// <param name="strategy"> 策略 </param>
+        /// <param name="environmentParams"> 回測環境的參數 </param>
+        /// <param name="combination"> 回測紀錄名稱 </param>
+        /// <param name="savePath"> 存檔位置 </param>
+        /// <returns></returns>
+        private static async Task<ThreeMarketsCombinationModels> RunParams<V>(ThreeMarketsDataProvider dataProvider, AutoSellCloseChange strategy, EnvironmentParams environmentParams, string combination, string savePath)
+            where V : class, IEnvironmentModels, IStrategyModels, new()
+        {
+            SpotEnvironment env = new(dataProvider, environmentParams);
+            AutoSellCloseChangeRunner<AutoSellCloseChange, V> runner;
             if (combination != string.Empty || savePath != string.Empty)
                 runner = new(strategy, env, new(combination, savePath));
             else

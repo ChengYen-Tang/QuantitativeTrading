@@ -1,116 +1,81 @@
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-using QuantitativeTrading.Environments;
+ï»¿using QuantitativeTrading.Environments;
 using QuantitativeTrading.Environments.ThreeMarkets;
-using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records;
 using QuantitativeTrading.Strategies.ThreeMarkets;
+using System.Runtime.CompilerServices;
 using IEnvironmentModels = QuantitativeTrading.Models.Records.ThreeMarkets.IEnvironmentModels;
 
 namespace QuantitativeTrading.Runners.ThreeMarkets
 {
-    /// <summary>
-    /// °õ¦æ¤T¨¤¥«³õ¦^´úªº¼Ò²Õ
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <typeparam name="U"></typeparam>
-    public class Runner<T, U>
-        where T : Strategy
+    public class AutoSellCloseChangeRunner<T, U> : Runner<T, U>
+        where T : AutoSellCloseChange
         where U : class, IEnvironmentModels, IStrategyModels, new()
     {
-        protected readonly Recorder<U> recorder;
-        protected readonly IThreeMarketEnvironment environment;
-        protected readonly T strategy;
-
         /// <summary>
-        /// ªì©l¤Æ
+        /// åˆå§‹åŒ–
         /// </summary>
-        /// <param name="strategy"> µ¦²¤ </param>
-        /// <param name="environment"> ¦^´úÀô¹Ò </param>
-        /// <param name="recorder"> ¥æ©ö¬ö¿ı¾¹ </param>
-        public Runner(T strategy, IThreeMarketEnvironment environment, Recorder<U> recorder)
-            => (this.strategy, this.environment, this.recorder) = (strategy, environment, recorder);
+        /// <param name="strategy"> ç­–ç•¥ </param>
+        /// <param name="environment"> å›æ¸¬ç’°å¢ƒ </param>
+        /// <param name="recorder"> äº¤æ˜“ç´€éŒ„å™¨ </param>
+        public AutoSellCloseChangeRunner(T strategy, IThreeMarketEnvironment environment, Recorder<U> recorder)
+            : base(strategy, environment, recorder) { }
 
         /// <summary>
-        /// ¶}©l¦^´ú¡Aª½¨ì¸ê®Æ¶°µ²§ô©Î³]©wÀô¹Òªº§C©ó³Ì§C¾lÃB
-        /// </summary>
-        /// <returns></returns>
-        public virtual async Task RunAsync()
-        {
-            SpotEnvironment spotEnvironment = environment as SpotEnvironment;
-            while (!spotEnvironment.IsGameOver)
-            {
-                ThreeMarketsDataProviderModel data = spotEnvironment.CurrentKline;
-                StrategyAction action = strategy.PolicyDecision(data);
-                Trading(action);
-                if (recorder is not null)
-                {
-                    U record = new();
-                    environment.Recording(record);
-                    strategy.Recording(record);
-                    recorder.Insert(record);
-                }
-                spotEnvironment.MoveNextTime(out _);
-            }
-
-            if (recorder is not null)
-                await recorder.SaveAsync();
-        }
-
-        /// <summary>
-        /// °õ¦æ¥æ©ö°Ê§@
-        /// ÀË¬dÀô¹Òªº¸ê²£¦b­ş­Ó¹ô¤W­±
-        /// ®Ú¾Úµ¦²¤µ²ªG¨M©w¦p¦ó¥æ©ö
-        /// ¨Ò: ¥Î USDT ¶R BTC
+        /// åŸ·è¡Œäº¤æ˜“å‹•ä½œ
+        /// æª¢æŸ¥ç’°å¢ƒçš„è³‡ç”¢åœ¨å“ªå€‹å¹£ä¸Šé¢
+        /// æ ¹æ“šç­–ç•¥çµæœæ±ºå®šå¦‚ä½•äº¤æ˜“
+        /// ä¾‹: ç”¨ USDT è²· BTC
         /// </summary>
         /// <param name="action"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected virtual void Trading(StrategyAction action)
+        protected override void Trading(StrategyAction action)
         {
+            SpotEnvironment spotEnvironment = environment as SpotEnvironment;
             if (action == StrategyAction.Coin)
             {
                 if (environment.Coin1Asset > environment.Balance && environment.Coin1Asset > environment.Coin2Asset)
                     environment.Trading(TradingAction.Sell, TradingMarket.Coin12Coin);
                 else if (environment.Coin2Asset > environment.Balance && environment.Coin2Asset > environment.Coin1Asset)
                     environment.Trading(TradingAction.Sell, TradingMarket.Coin22Coin);
+                strategy.CurrentHoldCoin = action;
+                strategy.BuyPrice = default;
             }
             else if (action == StrategyAction.Coin1)
             {
                 if (environment.Balance > environment.Coin1Asset && environment.Balance > environment.Coin2Asset)
+                {
                     environment.Trading(TradingAction.Buy, TradingMarket.Coin12Coin);
+                    strategy.CurrentHoldCoin = action;
+                    strategy.BuyPrice = spotEnvironment.CurrentKline.Coin12CoinKline.Close;
+                }
                 else if (environment.Coin2Asset > environment.Coin1Asset && environment.Balance < environment.Coin2Asset)
                 {
                     if (strategy.BestCoin1ToCoin2Path(action) == BestPath.Path1)
                         TwoStepTrading(TradingMarket.Coin22Coin, TradingMarket.Coin12Coin);
                     else
                         environment.Trading(TradingAction.Sell, TradingMarket.Coin22Coin1);
+                    strategy.CurrentHoldCoin = action;
+                    strategy.BuyPrice = spotEnvironment.CurrentKline.Coin12CoinKline.Close;
                 }
             }
             else if (action == StrategyAction.Coin2)
             {
                 if (environment.Balance > environment.Coin1Asset && environment.Balance > environment.Coin2Asset)
+                {
                     environment.Trading(TradingAction.Buy, TradingMarket.Coin22Coin);
+                    strategy.CurrentHoldCoin = action;
+                    strategy.BuyPrice = spotEnvironment.CurrentKline.Coin22CoinKline.Close;
+                }
                 else if (environment.Coin2Asset < environment.Coin1Asset && environment.Balance < environment.Coin1Asset)
                 {
                     if (strategy.BestCoin1ToCoin2Path(action) == BestPath.Path1)
                         TwoStepTrading(TradingMarket.Coin12Coin, TradingMarket.Coin22Coin);
                     else
                         environment.Trading(TradingAction.Buy, TradingMarket.Coin22Coin1);
+                    strategy.CurrentHoldCoin = action;
+                    strategy.BuyPrice = spotEnvironment.CurrentKline.Coin22CoinKline.Close;
                 }
             }
-        }
-
-        /// <summary>
-        /// ¨â¨BÆJ¥æ©ö
-        /// ½æ±¼©¼¯S¹ô¡A¶R¤A¤Ó¹ô
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected void TwoStepTrading(TradingMarket source, TradingMarket target)
-        {
-            environment.Trading(TradingAction.Sell, source);
-            environment.Trading(TradingAction.Buy, target);
         }
     }
 }

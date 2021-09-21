@@ -4,18 +4,21 @@ using QuantitativeTrading.Models.Records.ThreeMarkets;
 
 namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
-    /// <summary>
-    /// 滾動最大漲跌幅策略
-    /// </summary>
-    public class CloseChange : Strategy
+    public class AutoSellCloseChange : Strategy
     {
+        public decimal BuyPrice { set; private get; } = default;
+        public StrategyAction CurrentHoldCoin { set; private get; } = StrategyAction.Coin;
+
+        private readonly decimal sellCondition;
+        private decimal change = default;
+
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="bufferSize"> 需要觀察的天數 </param>
         /// <param name="tradingInterval"> 每次交易的間隔 </param>
-        public CloseChange(int bufferSize, int tradingInterval)
-            : base(bufferSize, tradingInterval) { }
+        public AutoSellCloseChange(int bufferSize, int tradingInterval, decimal sellCondition)
+            : base(bufferSize, tradingInterval) => this.sellCondition = sellCondition;
 
         /// <summary>
         /// 運行策略
@@ -29,6 +32,9 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
             buffer.Enqueue(model);
             ComputeParameter();
 
+            if ((CurrentHoldCoin == StrategyAction.Coin1 || CurrentHoldCoin == StrategyAction.Coin2) && change < sellCondition)
+                return StrategyAction.Coin;
+
             if (buffer.Count < ObservationTime || !CanTrading())
                 return StrategyAction.WaitBuffer;
 
@@ -40,15 +46,29 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
                 return StrategyAction.Coin2;
         }
 
+        protected override void ComputeParameter()
+        {
+            base.ComputeParameter();
+
+            change = CurrentHoldCoin == StrategyAction.Coin
+                ? default
+                : CurrentHoldCoin == StrategyAction.Coin1
+                    ? (buffer.Last.Coin12CoinKline.Close - BuyPrice) / BuyPrice * 100
+                    : (buffer.Last.Coin22CoinKline.Close - BuyPrice) / BuyPrice * 100;
+        }
+
         /// <summary>
         /// 紀錄資料
         /// </summary>
         /// <param name="record"></param>
         public override void Recording(IStrategyModels record)
         {
-            ICloseChangeModels closeChangeSumRecord = record as ICloseChangeModels;
+            IAutoSellCloseChange closeChangeSumRecord = record as IAutoSellCloseChange;
             closeChangeSumRecord.Coin1ToCoinChangeSum = Coin1ToCoinChange;
             closeChangeSumRecord.Coin2ToCoinChangeSum = Coin2ToCoinChange;
+            closeChangeSumRecord.BuyPrice = BuyPrice;
+            closeChangeSumRecord.CurrentHoldCoin = CurrentHoldCoin.ToString();
+            closeChangeSumRecord.BuyChange = change;
         }
     }
 }

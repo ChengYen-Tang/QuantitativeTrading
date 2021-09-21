@@ -11,4 +11,11 @@
         public int ObservationTime { get; set; }
         public int TradingInterval { get; set; }
     }
+
+    public interface IAutoSellCloseChange : ICloseChangeModels
+    {
+        public decimal BuyPrice { set; get; }
+        public decimal BuyChange { set; get; }
+        public string CurrentHoldCoin { set; get; }
+    }
 }
