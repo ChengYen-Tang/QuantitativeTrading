@@ -12,7 +12,11 @@ namespace QuantitativeTrading
         private readonly string file;
 
         public Recorder(string fileName, string filePath)
-            => (records, this.file) = (new(), Path.Combine(filePath, fileName + ".csv"));
+        {
+            if (!Directory.Exists(filePath))
+                Directory.CreateDirectory(filePath);
+            (records, this.file) = (new(), Path.Combine(filePath, fileName + ".csv"));
+        }
 
         public void Insert(T record)
             => records.Add(record);
