@@ -36,6 +36,22 @@ namespace QuantitativeTrading.Tests
 
             return new() { Coin12CoinKlines = Coin12CoinKlines, Coin22CoinKlines = Coin22CoinKlines, Coin22Coin1Klines = Coin22Coin1Klines };
         }
+
+        public static ThreeMarketsDataProvider CloseIsOneThreeMarketsDataProviderMock()
+            => new(CreateCloseIsOneThreeMarketsModelMock());
+
+        public static ThreeMarketsDatasetModel CreateCloseIsOneThreeMarketsModelMock()
+        {
+            DateTime now = DateTime.Now;
+            KlineModel[] Coin12CoinKlines = new KlineModel[] {
+                new() { Close = 1, Date = now }};
+            KlineModel[] Coin22CoinKlines = new KlineModel[] {
+                new() { Close = 1, Date = now }};
+            KlineModel[] Coin22Coin1Klines = new KlineModel[] {
+                new() { Close = 1, Date = now }};
+
+            return new() { Coin12CoinKlines = Coin12CoinKlines, Coin22CoinKlines = Coin22CoinKlines, Coin22Coin1Klines = Coin22Coin1Klines };
+        }
     }
 
     public class ThreeMarketsEnvironmentMock : SpotEnvironment
@@ -43,7 +59,7 @@ namespace QuantitativeTrading.Tests
         public readonly List<(TradingAction action, TradingMarket market)> Actions;
 
         public ThreeMarketsEnvironmentMock()
-            : base(null, default, default, default, default)
+            : base(Mocks.CloseIsOneThreeMarketsDataProviderMock(), default, default, default, default)
             => Actions = new();
 
         public override void Trading(TradingAction action, TradingMarket market)
