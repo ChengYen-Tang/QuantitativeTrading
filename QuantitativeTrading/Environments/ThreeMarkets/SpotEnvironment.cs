@@ -29,7 +29,7 @@ namespace QuantitativeTrading.Environments.ThreeMarkets
         /// <summary>
         /// Coin2 的資產
         /// </summary>
-        public decimal Coin2Asset { get => Coin2Balance * Coin2Balance * CurrentKline.Coin22CoinKline.Close; }
+        public decimal Coin2Asset { get => Coin2Balance * CurrentKline.Coin22CoinKline.Close; }
 
         /// <summary>
         /// 初始化
