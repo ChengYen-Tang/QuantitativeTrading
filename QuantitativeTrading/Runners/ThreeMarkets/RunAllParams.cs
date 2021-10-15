@@ -194,7 +194,7 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <param name="combination"> 回測紀錄名稱 </param>
         /// <param name="savePath"> 存檔位置 </param>
         /// <returns></returns>
-        private static Task<ThreeMarketsCombinationModels> RunAllDatasetParams<V>(ThreeMarketsDataProvider dataProvider, AutoSellCloseChange strategy, EnvironmentParams environmentParams, string combination, string savePath)
+        private static Task<ThreeMarketsCombinationModels> RunAllDatasetParams<V>(ThreeMarketsDataProvider dataProvider, AutoSellCloseChangeStrategy strategy, EnvironmentParams environmentParams, string combination, string savePath)
             where V : class, IEnvironmentModels, IStrategyModels, new()
         {
             ThreeMarketsDataProvider newDataProvider = dataProvider.Clone();
@@ -234,11 +234,11 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
         /// <param name="combination"> 回測紀錄名稱 </param>
         /// <param name="savePath"> 存檔位置 </param>
         /// <returns></returns>
-        private static async Task<ThreeMarketsCombinationModels> RunParams<V>(ThreeMarketsDataProvider dataProvider, AutoSellCloseChange strategy, EnvironmentParams environmentParams, string combination, string savePath)
+        private static async Task<ThreeMarketsCombinationModels> RunParams<V>(ThreeMarketsDataProvider dataProvider, AutoSellCloseChangeStrategy strategy, EnvironmentParams environmentParams, string combination, string savePath)
             where V : class, IEnvironmentModels, IStrategyModels, new()
         {
             SpotEnvironment env = new(dataProvider, environmentParams);
-            AutoSellCloseChangeRunner<AutoSellCloseChange, V> runner;
+            AutoSellCloseChangeRunner<AutoSellCloseChangeStrategy, V> runner;
             if (combination != string.Empty || savePath != string.Empty)
                 runner = new(strategy, env, new(combination, savePath));
             else
