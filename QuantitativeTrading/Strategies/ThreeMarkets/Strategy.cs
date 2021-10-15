@@ -90,6 +90,14 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         }
     }
 
+    public abstract class AutoSellCloseChangeStrategy : Strategy
+    {
+        public decimal BuyPrice { set; protected get; } = default;
+        public StrategyAction CurrentHoldCoin { set; protected get; } = StrategyAction.Coin;
+
+        public AutoSellCloseChangeStrategy(int bufferSize, int tradingInterval) : base(bufferSize, tradingInterval) { }
+    }
+
     public enum StrategyAction
     {
         WaitBuffer = 0,

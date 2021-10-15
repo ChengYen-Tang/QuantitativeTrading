@@ -1,21 +1,23 @@
 ﻿using QuantitativeTrading.Models;
 using QuantitativeTrading.Models.Records;
 using QuantitativeTrading.Models.Records.ThreeMarkets;
+using System.Linq;
 
 namespace QuantitativeTrading.Strategies.ThreeMarkets
 {
-    public class AutoSellCloseChange : AutoSellCloseChangeStrategy
+    public class AutoSellAverageCloseChange : AutoSellCloseChangeStrategy
     {
-        private readonly decimal sellCondition;
+        private decimal average = default;
         private decimal change = default;
+        private readonly FixedSizeQueue<ThreeMarketsDataProviderModel> statisticsAverageBuffer;
 
         /// <summary>
         /// 初始化
         /// </summary>
         /// <param name="bufferSize"> 需要觀察的天數 </param>
         /// <param name="tradingInterval"> 每次交易的間隔 </param>
-        public AutoSellCloseChange(int bufferSize, int tradingInterval, decimal sellCondition)
-            : base(bufferSize, tradingInterval) => this.sellCondition = sellCondition;
+        public AutoSellAverageCloseChange(int bufferSize, int tradingInterval, int movingAverageSize)
+            : base(bufferSize, tradingInterval) => (statisticsAverageBuffer) = (new(movingAverageSize));
 
         /// <summary>
         /// 運行策略
@@ -27,9 +29,13 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         public override StrategyAction PolicyDecision(ThreeMarketsDataProviderModel model)
         {
             buffer.Enqueue(model);
+            statisticsAverageBuffer.Enqueue(model);
             ComputeParameter();
 
-            if ((CurrentHoldCoin == StrategyAction.Coin1 || CurrentHoldCoin == StrategyAction.Coin2) && change < sellCondition)
+            if (CurrentHoldCoin == StrategyAction.Coin1 && change < 0 && model.Coin12CoinKline.Close < average)
+                return StrategyAction.Coin;
+
+            if (CurrentHoldCoin == StrategyAction.Coin2 && change < 0 && model.Coin22CoinKline.Close < average)
                 return StrategyAction.Coin;
 
             if (buffer.Count < ObservationTime || !CanTrading())
@@ -47,6 +53,11 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         {
             base.ComputeParameter();
 
+            average = CurrentHoldCoin == StrategyAction.Coin
+                ? default
+                : CurrentHoldCoin == StrategyAction.Coin1
+                    ? statisticsAverageBuffer.Average(item => item.Coin12CoinKline.Close)
+                    : statisticsAverageBuffer.Average(item => item.Coin22CoinKline.Close);
             change = CurrentHoldCoin == StrategyAction.Coin
                 ? default
                 : CurrentHoldCoin == StrategyAction.Coin1
@@ -60,12 +71,13 @@ namespace QuantitativeTrading.Strategies.ThreeMarkets
         /// <param name="record"></param>
         public override void Recording(IStrategyModels record)
         {
-            IAutoSellCloseChange closeChangeSumRecord = record as IAutoSellCloseChange;
+            IAutoSellAverageCloseChange closeChangeSumRecord = record as IAutoSellAverageCloseChange;
             closeChangeSumRecord.Coin1ToCoinChangeSum = Coin1ToCoinChange;
             closeChangeSumRecord.Coin2ToCoinChangeSum = Coin2ToCoinChange;
             closeChangeSumRecord.BuyPrice = BuyPrice;
             closeChangeSumRecord.CurrentHoldCoin = CurrentHoldCoin.ToString();
             closeChangeSumRecord.BuyChange = change;
+            closeChangeSumRecord.CloseAverage = average;
         }
     }
 }

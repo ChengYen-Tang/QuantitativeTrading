@@ -18,4 +18,9 @@
         public decimal BuyChange { set; get; }
         public string CurrentHoldCoin { set; get; }
     }
+
+    public interface IAutoSellAverageCloseChange : IAutoSellCloseChange
+    {
+        public decimal CloseAverage { set; get; }
+    }
 }

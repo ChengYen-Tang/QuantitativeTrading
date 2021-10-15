@@ -8,7 +8,7 @@ using IEnvironmentModels = QuantitativeTrading.Models.Records.ThreeMarkets.IEnvi
 namespace QuantitativeTrading.Runners.ThreeMarkets
 {
     public class AutoSellCloseChangeRunner<T, U> : Runner<T, U>
-        where T : AutoSellCloseChange
+        where T : AutoSellCloseChangeStrategy
         where U : class, IEnvironmentModels, IStrategyModels, new()
     {
         /// <summary>

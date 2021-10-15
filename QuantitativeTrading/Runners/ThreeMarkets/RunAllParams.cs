@@ -73,11 +73,43 @@ namespace QuantitativeTrading.Runners.ThreeMarkets
                     foreach (decimal sellCondition in sellConditions)
                         combinations.Add((observationTime, tradingInterval, sellCondition));
 
-            Parallel.ForEach(combinations, new ParallelOptions { MaxDegreeOfParallelism = 5 }, (combination) =>
+            Parallel.ForEach(combinations, new ParallelOptions { MaxDegreeOfParallelism = 10 }, (combination) =>
             {
                 AutoSellCloseChange strategy = new(combination.observationTime, combination.tradingInterval, combination.sellCondition);
                 string combinationName = $"{Utils.MinuteToHrOrDay(combination.observationTime)}-{Utils.MinuteToHrOrDay(combination.tradingInterval)}-{combination.sellCondition}";
                 ThreeMarketsCombinationModels result = RunAllDatasetParams<AutoSellCloseChangeRecordModel>(dataProvider, strategy, environmentParams, combinationName, savePath).Result;
+                results.Add(result);
+                counter++;
+                Console.WriteLine(counter);
+            });
+
+            var resultsArray = results.ToArray();
+            await new CsvExporter().Export(Path.Combine(savePath, "CombinationResult.csv"), resultsArray);
+        }
+
+        /// <summary>
+        /// 運行 AutoSellCloseChange 策略的參數
+        /// </summary>
+        /// <param name="dataProvider"> 回測資料 </param>
+        /// <param name="environmentParams"> 回測環境的參數 </param>
+        /// <param name="observationTimes"> 使用歷史多久的時間觀察 </param>
+        /// <param name="tradingIntervals"> 交易頻率(多久交易一次) </param>
+        /// <param name="savePath"> 存檔位置 </param>
+        /// <returns></returns>
+        public static async Task RunAutoSellAverageCloseChangeAllParams(ThreeMarketsDataProvider dataProvider, EnvironmentParams environmentParams, int[] observationTimes, int[] tradingIntervals, int[] movingAverageSizes, string savePath)
+        {
+            List<(int observationTime, int tradingInterval, int movingAverageSize)> combinations = new();
+            ConcurrentBag<ThreeMarketsCombinationModels> results = new();
+            foreach (int observationTime in observationTimes)
+                foreach (int tradingInterval in tradingIntervals)
+                    foreach (int movingAverageSize in movingAverageSizes)
+                        combinations.Add((observationTime, tradingInterval, movingAverageSize));
+
+            Parallel.ForEach(combinations, new ParallelOptions { MaxDegreeOfParallelism = 10 }, (combination) =>
+            {
+                AutoSellAverageCloseChange strategy = new(combination.observationTime, combination.tradingInterval, combination.movingAverageSize);
+                string combinationName = $"{Utils.MinuteToHrOrDay(combination.observationTime)}-{Utils.MinuteToHrOrDay(combination.tradingInterval)}-{combination.movingAverageSize}";
+                ThreeMarketsCombinationModels result = RunAllDatasetParams<AutoSellAverageCloseChangeRecordModel>(dataProvider, strategy, environmentParams, combinationName, savePath).Result;
                 results.Add(result);
                 counter++;
                 Console.WriteLine(counter);
