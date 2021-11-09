@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31313.79
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31825.309
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuantitativeTrading", "QuantitativeTrading\QuantitativeTrading.csproj", "{D93E8B6C-6349-4B1A-9AA0-86C92AF40BF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantitativeTrading.Tests", "QuantitativeTrading.Tests\QuantitativeTrading.Tests.csproj", "{AFF28889-773B-48DF-98AD-3DDF69A00D40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuantitativeTrading.Tests", "QuantitativeTrading.Tests\QuantitativeTrading.Tests.csproj", "{AFF28889-773B-48DF-98AD-3DDF69A00D40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultilateralArbitrage", "MultilateralArbitrage\MultilateralArbitrage.csproj", "{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,26 @@ Global
 		{AFF28889-773B-48DF-98AD-3DDF69A00D40}.Release|x64.Build.0 = Release|Any CPU
 		{AFF28889-773B-48DF-98AD-3DDF69A00D40}.Release|x86.ActiveCfg = Release|Any CPU
 		{AFF28889-773B-48DF-98AD-3DDF69A00D40}.Release|x86.Build.0 = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|ARM.Build.0 = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|x64.Build.0 = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Debug|x86.Build.0 = Debug|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|ARM.Build.0 = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|ARM64.Build.0 = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x64.ActiveCfg = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x64.Build.0 = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x86.ActiveCfg = Release|Any CPU
+		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
