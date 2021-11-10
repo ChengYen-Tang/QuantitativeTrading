@@ -29,10 +29,50 @@ public class Program
             symbols[symbol.BaseAsset].Add(symbol);
             symbols[symbol.QuoteAsset].Add(symbol);
         }
-
-
-        Console.WriteLine(string.Join('\n', binanceExchangeInfo.Symbols.Select(item => item.Name)));
-        Console.WriteLine(binanceExchangeInfo.Symbols.Count());
+        MarketMix marketMix = new(symbols, 5);
+        ICollection<ICollection<BinanceSymbol>> allMarketMix = marketMix.GetAllMarketMix("BUSD");
+        Console.WriteLine(allMarketMix.Count);
         Console.ReadKey();
+    }
+}
+
+public class MarketMix
+{
+    private readonly Dictionary<string, List<BinanceSymbol>> symbols;
+    private readonly int depth;
+    private readonly object allMarketMixLock;
+
+    public MarketMix(Dictionary<string, List<BinanceSymbol>> symbols, int depth = 0)
+        => (this.symbols, this.depth, allMarketMixLock) = (symbols, depth, new());
+
+    public ICollection<ICollection<BinanceSymbol>> GetAllMarketMix(string startAsset)
+    {
+        List<ICollection<BinanceSymbol>> allMarketMix = new();
+        Ecplore(startAsset, startAsset, 0, new(), allMarketMix);
+        return allMarketMix;
+    }
+
+    private void Ecplore(string startAsset, string ecploreAsset, int nowDepth, List<BinanceSymbol> marketMix, List<ICollection<BinanceSymbol>> allMarketMix)
+    {
+        if (depth is not 0 && nowDepth == depth)
+            return;
+        
+        foreach (BinanceSymbol binanceSymbol in symbols[ecploreAsset])
+        {
+            if (marketMix.Contains(binanceSymbol))
+                continue;
+
+            List<BinanceSymbol> buffer = new(marketMix);
+            buffer.Add(binanceSymbol);
+            string asset = ecploreAsset == binanceSymbol.BaseAsset ? binanceSymbol.QuoteAsset : binanceSymbol.BaseAsset;
+            if (asset == startAsset)
+            {
+                lock(allMarketMix)
+                    allMarketMix.Add(buffer);
+                continue;
+            }
+
+            Ecplore(startAsset, asset, nowDepth + 1, buffer, allMarketMix);
+        }
     }
 }
