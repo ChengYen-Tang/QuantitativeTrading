@@ -4,7 +4,7 @@ namespace MultilateralArbitrage.Modules
 {
     internal static class Extend
     {
-        public static IDictionary<string, ICollection<Symbol>> ToClassificationSymbol(this ICollection<Symbol> symbols)
+        public static IDictionary<string, ICollection<Symbol>> ToClassificationSymbols(this ICollection<Symbol> symbols)
         {
             Dictionary<string, ICollection<Symbol>> classificationSymbol = new();
             foreach (Symbol symbol in symbols)
