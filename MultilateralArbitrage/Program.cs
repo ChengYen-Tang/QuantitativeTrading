@@ -12,7 +12,7 @@ public class Program
         ICollection<Symbol> symbols = await api.DownloadSymbolsAsync();
         IDictionary<string, OrderBook> orderBooks = await api.GetAllOrderBooksAsync();
         IDictionary<string, ICollection<Symbol>> classificationSymbols = symbols.ToClassificationSymbols();
-        MarketMix marketMix = new(classificationSymbols, 4);
+        MarketMix marketMix = new(classificationSymbols, new string[] { "NGN" }, 5);
         ICollection<ICollection<Symbol>> allMarketMix = marketMix.GetAllMarketMix("BUSD");
         Console.WriteLine($"市場數量: {symbols.Count}");
         Console.WriteLine($"訂單書的市場數量: {orderBooks.Keys.Count}");

@@ -4,11 +4,15 @@ namespace MultilateralArbitrage.Modules
 {
     internal class MarketMix
     {
+        private readonly ICollection<string> excludeCoin;
         private readonly IDictionary<string, ICollection<Symbol>> symbols;
         private readonly int depth;
 
         public MarketMix(IDictionary<string, ICollection<Symbol>> symbols, int depth = 0)
-            => (this.symbols, this.depth) = (symbols, depth);
+            : this(symbols, Array.Empty<string>(), depth) {}
+
+        public MarketMix(IDictionary<string, ICollection<Symbol>> symbols, ICollection<string> excludeCoin, int depth = 0)
+            => (this.symbols, this.excludeCoin, this.depth) = (symbols, excludeCoin, depth);
 
         public ICollection<ICollection<Symbol>> GetAllMarketMix(string startAsset)
         {
@@ -30,6 +34,8 @@ namespace MultilateralArbitrage.Modules
                 List<Symbol> buffer = new(marketMix);
                 buffer.Add(binanceSymbol);
                 string asset = ecploreAsset == binanceSymbol.BaseAsset ? binanceSymbol.QuoteAsset : binanceSymbol.BaseAsset;
+                if (excludeCoin.Any() && excludeCoin.Contains(asset))
+                    continue;
                 if (asset == startAsset)
                 {
                     allMarketMix.Add(buffer);
