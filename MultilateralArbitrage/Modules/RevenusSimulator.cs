@@ -6,16 +6,16 @@ namespace MultilateralArbitrage.Modules
     {
         private readonly decimal fee;
         public ICollection<ICollection<Symbol>> AllMarketMix { get; set; }
-        public RevenusSimulator(ICollection<ICollection<Symbol>> allMarketMix, int fee)
-            => (AllMarketMix, this.fee) = (allMarketMix, fee / 100);
+        public RevenusSimulator(ICollection<ICollection<Symbol>> allMarketMix, double fee)
+            => (AllMarketMix, this.fee) = (allMarketMix, Convert.ToDecimal(fee / 100));
 
-        public async Task<ICollection<(ICollection<Symbol> marketMix, decimal assets)>> CalculateAllIncomeAsync(string startAsset, IDictionary<string, OrderBook> orderBooks)
+        public async Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> CalculateAllIncomeAsync(string startAsset, IDictionary<string, OrderBook> orderBooks)
         {
-            IEnumerable<Task<(ICollection<Symbol> marketMix, decimal asset)>> tasks = AllMarketMix.AsParallel().Select(item => Task.Run<(ICollection<Symbol> marketMix, decimal asset)>(() => (item, CalculateIncome(startAsset, item, orderBooks))));
+            IEnumerable<Task<(ICollection<Symbol> marketMix, float asset)>> tasks = AllMarketMix.AsParallel().Select(item => Task.Run<(ICollection<Symbol> marketMix, float asset)>(() => (item, CalculateIncome(startAsset, item, orderBooks))));
             return await Task.WhenAll(tasks);
         }
 
-        public decimal CalculateIncome(string startAsset, ICollection<Symbol> marketMix, IDictionary<string, OrderBook> orderBooks)
+        public float CalculateIncome(string startAsset, ICollection<Symbol> marketMix, IDictionary<string, OrderBook> orderBooks)
         {
             decimal initialAssets = 1000000;
             decimal assets = initialAssets;
@@ -25,7 +25,7 @@ namespace MultilateralArbitrage.Modules
                 if (coin != symbol.BaseAsset && coin != symbol.QuoteAsset)
                     throw new ArgumentException($"Coin: {coin} not in symbol: {symbol.Name}, MarketMix: {string.Join(", ", marketMix.Select(item => item.Name))}");
                 if (orderBooks[symbol.Name].AskPrice is 0 || orderBooks[symbol.Name].BidPrice is 0)
-                    return decimal.MinValue;
+                    return float.MinValue;
                 if (coin == symbol.QuoteAsset)
                 {
                     assets /= orderBooks[symbol.Name].AskPrice;
@@ -39,7 +39,7 @@ namespace MultilateralArbitrage.Modules
                 assets -= assets * fee;
             }
 
-            return (assets - initialAssets) / initialAssets * 100;
+            return Convert.ToSingle((assets - initialAssets) / initialAssets * 100);
         }
     }
 }
