@@ -19,10 +19,14 @@ public class Program
         while (true)
         {
             IDictionary<string, OrderBook> orderBooks = await api.GetAllOrderBooksAsync();
-            IEnumerable<(ICollection<Symbol> marketMix, float assets)> revenus = (await simulator.CalculateAllIncomeAsync("BUSD", orderBooks)).OrderByDescending(item => item.assets).Take(10);
-            foreach ((ICollection<Symbol> marketMix, float assets) result in revenus)
-                Console.WriteLine($"Asset: {result.assets:F2}%, MarketMix: {string.Join(", ", result.marketMix.Select(item => item.Name))}");
-            Console.WriteLine("======================================================================================================");
+            if (orderBooks.Count == 0)
+                continue;
+            IEnumerable<(ICollection<Symbol> marketMix, float assets)> revenus = (await simulator.CalculateAllIncomeAsync("USDT", orderBooks)).Where(item => item.assets > 1);
+            using ApplicationDbContext db = new();
+            db.AssetsRecords.AddRange(revenus.Select(item => new AssetsRecord() { Date = DateTime.Now, Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
+            await db.SaveChangesAsync();
+            if (revenus.Any())
+                Console.WriteLine(DateTime.Now.ToString());
             await Task.Delay(30000);
         }
     }
