@@ -1,11 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-#nullable disable
-
 namespace MultilateralArbitrage.Migrations
 {
-    public partial class _20211122 : Migration
+    public partial class _20211123 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

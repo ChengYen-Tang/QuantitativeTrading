@@ -1,4 +1,5 @@
 ﻿using MultilateralArbitrage.Models;
+using System.Collections.Generic;
 
 namespace MultilateralArbitrage.Modules
 {
