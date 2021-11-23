@@ -9,6 +9,11 @@ namespace MultilateralArbitrage.Models
             optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=MultilateralArbitrage;User ID=sa;Password=P@ssw0rd;", opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(30).TotalSeconds));
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AssetsRecord>(eb => eb.HasNoKey());
+        }
+
         public virtual DbSet<AssetsRecord> AssetsRecords { get; set; }
     }
 
