@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace MultilateralArbitrage.Models
 {
@@ -10,17 +11,16 @@ namespace MultilateralArbitrage.Models
             optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=MultilateralArbitrage;User ID=sa;Password=P@ssw0rd;", opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(30).TotalSeconds));
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<AssetsRecord>(eb => eb.HasNoKey());
-        }
-
         public virtual DbSet<AssetsRecord> AssetsRecords { get; set; }
     }
 
-    [Keyless]
     internal class AssetsRecord
     {
+        public AssetsRecord()
+            => (Id, Date) = (Guid.NewGuid(), DateTime.Now);
+
+        [Key]
+        public Guid Id { get; set; }
         public string MarketMix { get; set; }
         public DateTime Date { get; set; }
         public float Assets { get; set; }

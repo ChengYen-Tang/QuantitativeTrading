@@ -30,7 +30,7 @@ namespace MultilateralArbitrage
                     continue;
                 IEnumerable<(ICollection<Symbol> marketMix, float assets)> revenus = (await simulator.CalculateAllIncomeAsync(startAsset, orderBooks)).Where(item => item.assets > 1);
                 using ApplicationDbContext db = new();
-                db.AssetsRecords.AddRange(revenus.Select(item => new AssetsRecord() { Date = DateTime.Now, Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
+                db.AssetsRecords.AddRange(revenus.Select(item => new AssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
                 await db.SaveChangesAsync();
                 if (revenus.Any())
                     Console.WriteLine(DateTime.Now.ToString());
