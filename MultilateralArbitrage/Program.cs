@@ -26,7 +26,7 @@ namespace MultilateralArbitrage
             while (true)
             {
                 IDictionary<string, OrderBook> orderBooks = await api.GetAllOrderBooksAsync();
-                if (orderBooks.Count == 0)
+                if (orderBooks is null)
                     continue;
                 IEnumerable<(ICollection<Symbol> marketMix, float assets)> revenus = (await simulator.CalculateAllIncomeAsync(startAsset, orderBooks)).Where(item => item.assets > 1);
                 using ApplicationDbContext db = new();
