@@ -38,6 +38,16 @@ namespace MultilateralArbitrage.Modules.API
             return bookPrice.ToDictionary(item => item.Symbol, item => new OrderBook(item.BestBidPrice, item.BestBidQuantity, item.BestAskPrice, item.BestAskQuantity, item.Timestamp));
         }
 
+        public async Task<IDictionary<string, LatestPrice>> GetAllLatestPrice()
+        {
+            WebCallResult<IEnumerable<BinancePrice>> webCallResult = await client.Spot.Market.GetPricesAsync();
+            if (!webCallResult.Success)
+                return null!;
+
+            IEnumerable<BinancePrice> prices = webCallResult.Data;
+            return prices.ToDictionary(item => item.Symbol, item => new LatestPrice(item.Price, item.Timestamp));
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

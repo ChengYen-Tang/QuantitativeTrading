@@ -8,5 +8,6 @@ namespace MultilateralArbitrage.Modules.API
     {
         Task<ICollection<Symbol>> DownloadSymbolsAsync();
         Task<IDictionary<string, OrderBook>> GetAllOrderBooksAsync();
+        Task<IDictionary<string, LatestPrice>> GetAllLatestPrice();
     }
 }
