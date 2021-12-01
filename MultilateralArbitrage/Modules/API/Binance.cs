@@ -1,7 +1,6 @@
 ﻿using Binance.Net;
 using Binance.Net.Objects.Spot.MarketData;
 using CryptoExchange.Net.Objects;
-using CryptoExchange.Net.Sockets;
 using MultilateralArbitrage.Models;
 using System;
 using System.Collections.Generic;

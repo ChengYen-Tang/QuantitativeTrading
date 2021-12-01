@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MultilateralArbitrage.Modules
 {
-    internal class RevenusSimulator
+    internal class Collision
     {
         private readonly decimal fee;
         public ICollection<ICollection<Symbol>> AllMarketMix { get; set; }
-        public RevenusSimulator(ICollection<ICollection<Symbol>> allMarketMix, double fee)
+        public Collision(ICollection<ICollection<Symbol>> allMarketMix, double fee)
             => (AllMarketMix, this.fee) = (allMarketMix, Convert.ToDecimal(fee / 100));
 
         public async Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> CalculateAllIncomeAsync(string startAsset, IDictionary<string, OrderBook> orderBooks)

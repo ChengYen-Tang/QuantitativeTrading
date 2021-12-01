@@ -22,7 +22,7 @@ namespace MultilateralArbitrage
             ICollection<ICollection<Symbol>> allMarketMix = marketMix.GetAllMarketMix(startAsset);
             Console.WriteLine($"市場數量: {symbols.Count}");
             Console.WriteLine($"組合數量: {allMarketMix.Count}");
-            RevenusSimulator simulator = new(allMarketMix, 0.1);
+            Collision simulator = new(allMarketMix, 0.1);
             while (true)
             {
                 IDictionary<string, OrderBook> orderBooks = await api.GetAllOrderBooksAsync();
