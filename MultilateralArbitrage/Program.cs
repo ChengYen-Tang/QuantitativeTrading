@@ -1,9 +1,11 @@
 ﻿using MultilateralArbitrage.Models;
 using MultilateralArbitrage.Modules;
 using MultilateralArbitrage.Modules.API;
+using MultilateralArbitrage.Modules.RevenusSimulator;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MultilateralArbitrage
@@ -22,19 +24,31 @@ namespace MultilateralArbitrage
             ICollection<ICollection<Symbol>> allMarketMix = marketMix.GetAllMarketMix(startAsset);
             Console.WriteLine($"市場數量: {symbols.Count}");
             Console.WriteLine($"組合數量: {allMarketMix.Count}");
-            Collision simulator = new(allMarketMix, 0.1);
+            Collision collision = new(allMarketMix, 0.1);
+            CollisionAndLastStepPadding collisionAndLastStepPadding = new(allMarketMix, 0.1);
             while (true)
             {
-                IDictionary<string, OrderBook> orderBooks = await api.GetAllOrderBooksAsync();
-                if (orderBooks is null)
+                DateTime nowTime = DateTime.Now;
+                Task<IDictionary<string, OrderBook>> orderBooksTask = api.GetAllOrderBooksAsync();
+                Task<IDictionary<string, LatestPrice>> latestPricesTask = api.GetAllLatestPrices();
+                IDictionary<string, OrderBook> orderBooks = await orderBooksTask;
+                IDictionary<string, LatestPrice> latestPrices = await latestPricesTask;
+                if (orderBooks is null && latestPrices is null)
                     continue;
-                IEnumerable<(ICollection<Symbol> marketMix, float assets)> revenus = (await simulator.CalculateAllIncomeAsync(startAsset, orderBooks)).Where(item => item.assets > 1);
+
+                Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> collisionTask = collision.CalculateAllIncomeAsync(startAsset, orderBooks!);
+                Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> collisionAndLastStepPaddingTask = collisionAndLastStepPadding.CalculateAllIncomeAsync(startAsset, orderBooks!, latestPrices!);
+                IEnumerable<(ICollection<Symbol> marketMix, float assets)> collisionRevenus = (await collisionTask).Where(item => item.assets > 1);
+                IEnumerable<(ICollection<Symbol> marketMix, float assets)> collisionAndLastStepPaddingRevenus = (await collisionAndLastStepPaddingTask).Where(item => item.assets > 1);
                 using ApplicationDbContext db = new();
-                db.AssetsRecords.AddRange(revenus.Select(item => new AssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
+                db.CollisionAssetsRecords.AddRange(collisionRevenus.Select(item => new AssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
+                db.CollisionAndLastStepPaddingAssetsRecords.AddRange(collisionAndLastStepPaddingRevenus.Select(item => new AssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
                 await db.SaveChangesAsync();
-                if (revenus.Any())
+                if (collisionRevenus.Any() || collisionAndLastStepPaddingRevenus.Any())
                     Console.WriteLine(DateTime.Now.ToString());
-                await Task.Delay(30000);
+                await Task.Delay(25000);
+
+                SpinWait.SpinUntil(() => DateTime.Now > nowTime.AddSeconds(30));
             }
         }
     }

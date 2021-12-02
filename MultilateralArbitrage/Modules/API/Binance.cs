@@ -37,7 +37,7 @@ namespace MultilateralArbitrage.Modules.API
             return bookPrice.ToDictionary(item => item.Symbol, item => new OrderBook(item.BestBidPrice, item.BestBidQuantity, item.BestAskPrice, item.BestAskQuantity, item.Timestamp));
         }
 
-        public async Task<IDictionary<string, LatestPrice>> GetAllLatestPrice()
+        public async Task<IDictionary<string, LatestPrice>> GetAllLatestPrices()
         {
             WebCallResult<IEnumerable<BinancePrice>> webCallResult = await client.Spot.Market.GetPricesAsync();
             if (!webCallResult.Success)

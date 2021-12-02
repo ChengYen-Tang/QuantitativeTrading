@@ -11,7 +11,8 @@ namespace MultilateralArbitrage.Models
             optionsBuilder.UseSqlServer("Data Source=localhost,1433;Initial Catalog=MultilateralArbitrage;User ID=sa;Password=P@ssw0rd;", opts => opts.CommandTimeout((int)TimeSpan.FromMinutes(30).TotalSeconds));
         }
 
-        public virtual DbSet<AssetsRecord> AssetsRecords { get; set; }
+        public virtual DbSet<AssetsRecord> CollisionAssetsRecords { get; set; }
+        public virtual DbSet<AssetsRecord> CollisionAndLastStepPaddingAssetsRecords { get; set; }
     }
 
     internal class AssetsRecord

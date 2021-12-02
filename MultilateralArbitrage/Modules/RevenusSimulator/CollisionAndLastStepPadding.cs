@@ -13,13 +13,13 @@ namespace MultilateralArbitrage.Modules.RevenusSimulator
         public CollisionAndLastStepPadding(ICollection<ICollection<Symbol>> allMarketMix, double fee)
             => (AllMarketMix, this.fee) = (allMarketMix, Convert.ToDecimal(fee / 100));
 
-        public async Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> CalculateAllIncomeAsync(string startAsset, IDictionary<string, OrderBook> orderBooks, IDictionary<string, LatestPrice> lastestPrice)
+        public async Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> CalculateAllIncomeAsync(string startAsset, IDictionary<string, OrderBook> orderBooks, IDictionary<string, LatestPrice> lastestPrices)
         {
-            IEnumerable<Task<(ICollection<Symbol> marketMix, float asset)>> tasks = AllMarketMix.AsParallel().Select(item => Task.Run<(ICollection<Symbol> marketMix, float asset)>(() => (item, CalculateIncome(startAsset, item, orderBooks, lastestPrice))));
+            IEnumerable<Task<(ICollection<Symbol> marketMix, float asset)>> tasks = AllMarketMix.AsParallel().Select(item => Task.Run<(ICollection<Symbol> marketMix, float asset)>(() => (item, CalculateIncome(startAsset, item, orderBooks, lastestPrices))));
             return await Task.WhenAll(tasks);
         }
 
-        public float CalculateIncome(string startAsset, ICollection<Symbol> marketMix, IDictionary<string, OrderBook> orderBooks, IDictionary<string, LatestPrice> lastestPrice)
+        public float CalculateIncome(string startAsset, ICollection<Symbol> marketMix, IDictionary<string, OrderBook> orderBooks, IDictionary<string, LatestPrice> lastestPrices)
         {
             decimal initialAssets = 1000000;
             decimal assets = initialAssets;
@@ -32,12 +32,12 @@ namespace MultilateralArbitrage.Modules.RevenusSimulator
                     return float.MinValue;
                 if (coin == result.Value.QuoteAsset)
                 {
-                    assets /= result.Index == marketMix.Count - 1 ? lastestPrice[result.Value.Name].Price : orderBooks[result.Value.Name].AskPrice;
+                    assets /= result.Index == marketMix.Count - 1 ? lastestPrices[result.Value.Name].Price : orderBooks[result.Value.Name].AskPrice;
                     coin = result.Value.BaseAsset;
                 }
                 else if (coin == result.Value.BaseAsset)
                 {
-                    assets *= result.Index == marketMix.Count - 1 ? lastestPrice[result.Value.Name].Price : orderBooks[result.Value.Name].BidPrice;
+                    assets *= result.Index == marketMix.Count - 1 ? lastestPrices[result.Value.Name].Price : orderBooks[result.Value.Name].BidPrice;
                     coin = result.Value.QuoteAsset;
                 }
                 assets -= assets * fee;
