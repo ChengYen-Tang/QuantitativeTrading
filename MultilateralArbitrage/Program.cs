@@ -41,8 +41,8 @@ namespace MultilateralArbitrage
                 IEnumerable<(ICollection<Symbol> marketMix, float assets)> collisionRevenus = (await collisionTask).Where(item => item.assets > 1);
                 IEnumerable<(ICollection<Symbol> marketMix, float assets)> collisionAndLastStepPaddingRevenus = (await collisionAndLastStepPaddingTask).Where(item => item.assets > 1);
                 using ApplicationDbContext db = new();
-                db.CollisionAssetsRecords.AddRange(collisionRevenus.Select(item => new AssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
-                db.CollisionAndLastStepPaddingAssetsRecords.AddRange(collisionAndLastStepPaddingRevenus.Select(item => new AssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
+                db.CollisionAssetsRecords.AddRange(collisionRevenus.Select(item => new CollisionAssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
+                db.CollisionAndLastStepPaddingAssetsRecords.AddRange(collisionAndLastStepPaddingRevenus.Select(item => new CollisionAndLastStepPaddingAssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
                 await db.SaveChangesAsync();
                 if (collisionRevenus.Any() || collisionAndLastStepPaddingRevenus.Any())
                     Console.WriteLine(DateTime.Now.ToString());
