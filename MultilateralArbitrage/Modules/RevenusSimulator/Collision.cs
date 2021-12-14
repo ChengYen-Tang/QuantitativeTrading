@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace MultilateralArbitrage.Modules.RevenusSimulator
 {
     /// <summary>
-    /// 模擬強撞掛單的收益模組
+    /// 模擬收益的模組
+    /// 所有交易皆強撞掛單
     /// </summary>
     internal class Collision
     {
