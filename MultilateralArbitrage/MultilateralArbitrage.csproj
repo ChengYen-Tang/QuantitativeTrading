@@ -15,5 +15,9 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.12" />
     <PackageReference Include="Mindbox.EasyCaching.InMemory" Version="1.4.0" />
   </ItemGroup>
-
+  <ItemGroup>
+	<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+	  <_Parameter1>$(MSBuildProjectName).Tests</_Parameter1>
+	</AssemblyAttribute>
+  </ItemGroup>
 </Project>

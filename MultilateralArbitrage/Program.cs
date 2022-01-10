@@ -16,7 +16,7 @@ namespace MultilateralArbitrage
 
         public static async Task Main()
         {
-
+            // Download spots symbols from binance and calculate market mix
             IAPI api = new Modules.API.Binance();
             ICollection<Symbol> symbols = await api.DownloadSymbolsAsync();
             IDictionary<string, ICollection<Symbol>> classificationSymbols = symbols.ToClassificationSymbols();
@@ -24,10 +24,12 @@ namespace MultilateralArbitrage
             ICollection<ICollection<Symbol>> allMarketMix = marketMix.GetAllMarketMix(startAsset);
             Console.WriteLine($"市場數量: {symbols.Count}");
             Console.WriteLine($"組合數量: {allMarketMix.Count}");
+            // New revenus simulator instance
             Collision collision = new(allMarketMix, 0.1);
             CollisionAndLastStepPadding collisionAndLastStepPadding = new(allMarketMix, 0.1);
             while (true)
             {
+                // Get data from binance
                 DateTime nowTime = DateTime.Now;
                 Task<IDictionary<string, OrderBook>> orderBooksTask = api.GetAllOrderBooksAsync();
                 Task<IDictionary<string, LatestPrice>> latestPricesTask = api.GetAllLatestPrices();
@@ -36,10 +38,12 @@ namespace MultilateralArbitrage
                 if (orderBooks is null && latestPrices is null)
                     continue;
 
+                // Calculate all income
                 Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> collisionTask = collision.CalculateAllIncomeAsync(startAsset, orderBooks!);
                 Task<ICollection<(ICollection<Symbol> marketMix, float assets)>> collisionAndLastStepPaddingTask = collisionAndLastStepPadding.CalculateAllIncomeAsync(startAsset, orderBooks!, latestPrices!);
                 IEnumerable<(ICollection<Symbol> marketMix, float assets)> collisionRevenus = (await collisionTask).Where(item => item.assets > 1);
                 IEnumerable<(ICollection<Symbol> marketMix, float assets)> collisionAndLastStepPaddingRevenus = (await collisionAndLastStepPaddingTask).Where(item => item.assets > 1);
+                // Save symbols to database while income > 1%
                 using ApplicationDbContext db = new();
                 db.CollisionAssetsRecords.AddRange(collisionRevenus.Select(item => new CollisionAssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));
                 db.CollisionAndLastStepPaddingAssetsRecords.AddRange(collisionAndLastStepPaddingRevenus.Select(item => new CollisionAndLastStepPaddingAssetsRecord() { Assets = item.assets, MarketMix = string.Join(", ", item.marketMix.Select(item => item.Name)) }));

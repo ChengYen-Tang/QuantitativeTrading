@@ -5,6 +5,16 @@ namespace MultilateralArbitrage.Modules
 {
     internal static class Extend
     {
+        /// <summary>
+        /// 將市場使用字典分類
+        /// 
+        /// 例: ETHBTC, BTCUSDT
+        /// key = USDT: values = BTCUSDT
+        /// key = BTC: values = ETHBTC, BTCUSDT
+        /// key = ETH: values = ETHBTC
+        /// </summary>
+        /// <param name="symbols"> 要分類的市場 </param>
+        /// <returns></returns>
         public static IDictionary<string, ICollection<Symbol>> ToClassificationSymbols(this ICollection<Symbol> symbols)
         {
             Dictionary<string, ICollection<Symbol>> classificationSymbol = new();

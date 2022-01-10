@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuantitativeTrading", "Quan
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuantitativeTrading.Tests", "QuantitativeTrading.Tests\QuantitativeTrading.Tests.csproj", "{AFF28889-773B-48DF-98AD-3DDF69A00D40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultilateralArbitrage", "MultilateralArbitrage\MultilateralArbitrage.csproj", "{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultilateralArbitrage", "MultilateralArbitrage\MultilateralArbitrage.csproj", "{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultilateralArbitrage.Tests", "MultilateralArbitrage.Tests\MultilateralArbitrage.Tests.csproj", "{943FD000-A4C4-444B-9E61-A7778337DDF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,6 +85,26 @@ Global
 		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x64.Build.0 = Release|Any CPU
 		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x86.ActiveCfg = Release|Any CPU
 		{4BA576F7-FB0E-480D-808B-0DB128BA0F6B}.Release|x86.Build.0 = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|ARM.Build.0 = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|x64.Build.0 = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Debug|x86.Build.0 = Debug|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|ARM.ActiveCfg = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|ARM.Build.0 = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|ARM64.Build.0 = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|x64.ActiveCfg = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|x64.Build.0 = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|x86.ActiveCfg = Release|Any CPU
+		{943FD000-A4C4-444B-9E61-A7778337DDF6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
